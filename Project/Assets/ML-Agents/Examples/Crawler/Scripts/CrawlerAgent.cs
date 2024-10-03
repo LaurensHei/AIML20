@@ -197,53 +197,50 @@ public class CrawlerAgent : Agent
         bpDict[leg3Lower].SetJointStrength(continuousActions[++i]);
     }
 
-    void FixedUpdate()
+   void FixedUpdate()
+{
+    UpdateOrientationObjects();
+
+    // If enabled the feet will light up green when the foot is grounded.
+    if (useFootGroundedVisualization)
     {
-        UpdateOrientationObjects();
-
-        // If enabled the feet will light up green when the foot is grounded.
-        // This is just a visualization and isn't necessary for function
-        if (useFootGroundedVisualization)
-        {
-            foot0.material = m_JdController.bodyPartsDict[leg0Lower].groundContact.touchingGround
-                ? groundedMaterial
-                : unGroundedMaterial;
-            foot1.material = m_JdController.bodyPartsDict[leg1Lower].groundContact.touchingGround
-                ? groundedMaterial
-                : unGroundedMaterial;
-            foot2.material = m_JdController.bodyPartsDict[leg2Lower].groundContact.touchingGround
-                ? groundedMaterial
-                : unGroundedMaterial;
-            foot3.material = m_JdController.bodyPartsDict[leg3Lower].groundContact.touchingGround
-                ? groundedMaterial
-                : unGroundedMaterial;
-        }
-
-        var cubeForward = m_OrientationCube.transform.forward;
-
-        // Set reward for this step according to mixture of the following elements.
-        // a. Match target speed
-        //This reward will approach 1 if it matches perfectly and approach zero as it deviates
-        var matchSpeedReward = GetMatchingVelocityReward(cubeForward * TargetWalkingSpeed, GetAvgVelocity());
-
-        // b. Rotation alignment with target direction.
-        //This reward will approach 1 if it faces the target direction perfectly and approach zero as it deviates
-        var lookAtTargetReward = (Vector3.Dot(cubeForward, body.forward) + 1) * .5F;
-
-        AddReward(matchSpeedReward * lookAtTargetReward);
+        foot0.material = m_JdController.bodyPartsDict[leg0Lower].groundContact.touchingGround
+            ? groundedMaterial
+            : unGroundedMaterial;
+        foot1.material = m_JdController.bodyPartsDict[leg1Lower].groundContact.touchingGround
+            ? groundedMaterial
+            : unGroundedMaterial;
+        foot2.material = m_JdController.bodyPartsDict[leg2Lower].groundContact.touchingGround
+            ? groundedMaterial
+            : unGroundedMaterial;
+        foot3.material = m_JdController.bodyPartsDict[leg3Lower].groundContact.touchingGround
+            ? groundedMaterial
+            : unGroundedMaterial;
     }
 
-    /// <summary>
-    /// Update OrientationCube and DirectionIndicator
-    /// </summary>
-    void UpdateOrientationObjects()
+    var cubeForward = m_OrientationCube.transform.forward;
+
+    // Set reward for this step according to mixture of the following elements.
+    // a. Match target speed
+    var matchSpeedReward = GetMatchingVelocityReward(cubeForward * TargetWalkingSpeed, GetAvgVelocity());
+
+    // b. Rotation alignment with target direction.
+    var lookAtTargetReward = (Vector3.Dot(cubeForward, body.forward) + 1) * 0.5f;
+
+    // New: Speed deviation penalty
+    var avgVel = GetAvgVelocity(); // Get average velocity of the agent (new)
+    var speedDeviationPenalty = -Mathf.Abs(TargetWalkingSpeed - avgVel.magnitude) * 0.1f; // Penalize deviation from target speed with a scaling factor (new)
+
+    // Add rewards and penalties
+    AddReward(matchSpeedReward * lookAtTargetReward + speedDeviationPenalty); // Include penalty in reward calculation (new)
+
+    // New: Log if the agent is penalized for speed deviation
+    if (matchSpeedReward < 1.0f)
     {
-        m_OrientationCube.UpdateOrientation(body, m_Target);
-        if (m_DirectionIndicator)
-        {
-            m_DirectionIndicator.MatchOrientation(m_OrientationCube.transform);
-        }
+        Debug.Log("Speed deviation penalty applied: " + (1.0f - matchSpeedReward) + " | Penalty: " + speedDeviationPenalty);
     }
+}
+    //test
 
     /// <summary>
     ///Returns the average velocity of all of the body parts
