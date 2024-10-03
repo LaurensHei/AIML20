@@ -54,29 +54,57 @@ public class BasicController : MonoBehaviour
     /// </summary>
     /// <param name="direction"></param>
     public void MoveDirection(int direction)
+{
+    position += direction;
+    if (position < k_MinPosition) { position = k_MinPosition; }
+    if (position > k_MaxPosition) { position = k_MaxPosition; }
+
+    gameObject.transform.position = new Vector3(position - 10f, 0f, 0f);
+
+    m_Agent.AddReward(-0.01f);
+
+    if (position == k_SmallGoalPosition)
     {
-        position += direction;
-        if (position < k_MinPosition) { position = k_MinPosition; }
-        if (position > k_MaxPosition) { position = k_MaxPosition; }
+        m_Agent.AddReward(0.1f);
+        Jump(); // Add a jump when reaching the small goal
+        m_Agent.EndEpisode();
+        ResetAgent();
+    }
 
-        gameObject.transform.position = new Vector3(position - 10f, 0f, 0f);
+    if (position == k_LargeGoalPosition)
+    {
+        m_Agent.AddReward(1f);
+        Jump(); // Add a jump when reaching the large goal
+        m_Agent.EndEpisode();
+        ResetAgent();
+    }
+}
 
-        m_Agent.AddReward(-0.01f);
+    /// <summary>
+    /// Causes the GameObject to jump upward slightly.
+    /// </summary>
+    private void Jump()
+    {
+        // Create a small jump effect by increasing the y-axis position
+        gameObject.transform.position += new Vector3(0, 1f, 0);
 
-        if (position == k_SmallGoalPosition)
+        // Optionally, we can smoothly move the object back down over time
+        StartCoroutine(SmoothFall());
+    }
+
+    /// <summary>
+    /// Smoothly moves the GameObject back to its original y position.
+    /// </summary>
+    private System.Collections.IEnumerator SmoothFall()
+    {
+        Vector3 originalPosition = new Vector3(gameObject.transform.position.x, 0f, 0f);
+        while (gameObject.transform.position.y > 0)
         {
-            m_Agent.AddReward(0.1f);
-            m_Agent.EndEpisode();
-            ResetAgent();
-        }
-
-        if (position == k_LargeGoalPosition)
-        {
-            m_Agent.AddReward(1f);
-            m_Agent.EndEpisode();
-            ResetAgent();
+            gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, originalPosition, Time.deltaTime * 2f);
+            yield return null;
         }
     }
+
 
     public void ResetAgent()
     {
