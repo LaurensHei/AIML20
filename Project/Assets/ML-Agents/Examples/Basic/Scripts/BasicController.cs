@@ -74,28 +74,18 @@ public class BasicController : MonoBehaviour
     if (position == k_LargeGoalPosition)
     {
         m_Agent.AddReward(1f);
-        Jump(); // Add a jump when reaching the large goal
+        Jump();
         m_Agent.EndEpisode();
         ResetAgent();
     }
 }
 
-    /// <summary>
-    /// Causes the GameObject to jump upward slightly.
-    /// </summary>
     private void Jump()
     {
-        // Create a small jump effect by increasing the y-axis position
         gameObject.transform.position += new Vector3(0, 1f, 0);
-
-        // Optionally, we can smoothly move the object back down over time
-        StartCoroutine(SmoothFall());
+        StartCoroutine(Slowfall());
     }
-
-    /// <summary>
-    /// Smoothly moves the GameObject back to its original y position.
-    /// </summary>
-    private System.Collections.IEnumerator SmoothFall()
+    private System.Collections.IEnumerator SlowFall()
     {
         Vector3 originalPosition = new Vector3(gameObject.transform.position.x, 0f, 0f);
         while (gameObject.transform.position.y > 0)
