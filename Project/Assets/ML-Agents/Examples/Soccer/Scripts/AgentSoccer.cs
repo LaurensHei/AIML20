@@ -99,7 +99,7 @@ public class AgentSoccer : Agent
     {
         var dirToGo = Vector3.zero;
         var rotateDir = Vector3.zero;
-
+        
         m_KickPower = 0f;
 
         var forwardAxis = act[0];
@@ -137,9 +137,25 @@ public class AgentSoccer : Agent
                 break;
         }
 
+        if (m_SoccerSettings == null)
+        {
+            Debug.LogError("SoccerSettings is missing!");
+        }
+        if (agentRb == null)
+        {
+            Debug.LogError("Rigidbody component is missing!");
+        }
+        if (m_BehaviorParameters == null)
+        {
+            Debug.LogError("BehaviorParameters component is missing!");
+        }
+        if (m_ResetParams == null)
+        {
+            Debug.LogError("Reset Parameters are not available!");
+        }
+
         transform.Rotate(rotateDir, Time.deltaTime * 100f);
-        agentRb.AddForce(dirToGo * m_SoccerSettings.agentRunSpeed,
-            ForceMode.VelocityChange);
+        agentRb.AddForce(dirToGo * m_SoccerSettings.agentRunSpeed,ForceMode.VelocityChange);
     }
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
