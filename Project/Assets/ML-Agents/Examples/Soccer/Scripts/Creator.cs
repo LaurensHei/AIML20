@@ -50,27 +50,44 @@ public class Creator : MonoBehaviour
         }
     }
 
-    // Method to create and store a new sound object at a specific position
-    public void CreateSound(Vector3 position,string fromName, string toName)
+  public void CreateSound(Vector3 position, string fromName, string toName)
+{
+    if (soundCreater != null)
     {
-        // Check if the sound creator prefab is assigned
-        if (soundCreater != null)
-        {
-            // Instantiate a new sound object at the given position
-            GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
+        // Instantiate a new sound object at the given position
+        GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
+        newSound.transform.localScale = Vector3.one;
+        newSound.name = fromName + " " + toName;
 
-            // Reset its initial scale
-            newSound.transform.localScale = Vector3.one;
-            newSound.name = fromName + " " + toName;
-
-            // Add the new sound object to the list for tracking
-            sounds.Add(newSound);
-        }
-        else
+        // Modify transparency of the sound object
+        Renderer renderer = newSound.GetComponent<Renderer>();
+        if (renderer != null)
         {
-            Debug.LogWarning("soundCreater prefab is not assigned.");
+            Material material = renderer.material; 
+            Color color = material.color;
+            color.a = 0.2f; 
+            material.color = color;
+
+            
+            material.SetFloat("_Mode", 3); 
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+            material.DisableKeyword("_ALPHATEST_ON");
+            material.EnableKeyword("_ALPHABLEND_ON");
+            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            material.renderQueue = 3000;
         }
+
+        // Add the new sound object to the list for tracking
+        sounds.Add(newSound);
     }
+    else
+    {
+        Debug.LogWarning("soundCreater prefab is not assigned.");
+    }
+}
+
 
     void OnCollisionEnter(Collision collision)
     {
