@@ -50,20 +50,14 @@ public class Creator : MonoBehaviour
         }
     }
 
-    // Method to create and store a new sound object at a specific position
-    public void CreateSound(Vector3 position, string fromName, string toName)
-        {
-    // Check if the sound creator prefab is assigned
+  public void CreateSound(Vector3 position, string fromName, string toName)
+{
     if (soundCreater != null)
     {
         // Instantiate a new sound object at the given position
         GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
-
-        // Reset its initial scale
         newSound.transform.localScale = Vector3.one;
-
-        // Set the name for debugging or tracking purposes
-        newSound.name = "sound " + fromName + " " + toName;
+        newSound.name = fromName + " " + toName;
 
         // Ensure the Collider exists and set it to be a Trigger
         Collider collider = newSound.GetComponent<Collider>();
@@ -74,6 +68,26 @@ public class Creator : MonoBehaviour
         else
         {
             Debug.LogWarning("The instantiated sound object does not have a Collider component.");
+        }
+
+        // Modify transparency of the sound object
+        Renderer renderer = newSound.GetComponent<Renderer>();
+        if (renderer != null)
+        {
+            Material material = renderer.material; 
+            Color color = material.color;
+            color.a = 0.2f; 
+            material.color = color;
+
+            
+            material.SetFloat("_Mode", 3); 
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+            material.DisableKeyword("_ALPHATEST_ON");
+            material.EnableKeyword("_ALPHABLEND_ON");
+            material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+            material.renderQueue = 3000;
         }
 
         // Add the new sound object to the list for tracking
