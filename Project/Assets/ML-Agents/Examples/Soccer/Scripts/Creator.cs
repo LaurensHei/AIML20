@@ -51,29 +51,44 @@ public class Creator : MonoBehaviour
     }
 
     // Method to create and store a new sound object at a specific position
-    public void CreateSound(Vector3 position,string fromName, string toName)
-    {
-        // Check if the sound creator prefab is assigned
-        if (soundCreater != null)
+    public void CreateSound(Vector3 position, string fromName, string toName)
         {
-            // Instantiate a new sound object at the given position
-            GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
+    // Check if the sound creator prefab is assigned
+    if (soundCreater != null)
+    {
+        // Instantiate a new sound object at the given position
+        GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
 
-            // Reset its initial scale
-            newSound.transform.localScale = Vector3.one;
-            newSound.name = fromName + " " + toName;
+        // Reset its initial scale
+        newSound.transform.localScale = Vector3.one;
 
-            // Add the new sound object to the list for tracking
-            sounds.Add(newSound);
+        // Set the name for debugging or tracking purposes
+        newSound.name = "sound " + fromName + " " + toName;
+
+        // Ensure the Collider exists and set it to be a Trigger
+        Collider collider = newSound.GetComponent<Collider>();
+        if (collider != null)
+        {
+            collider.isTrigger = true;
         }
         else
         {
-            Debug.LogWarning("soundCreater prefab is not assigned.");
+            Debug.LogWarning("The instantiated sound object does not have a Collider component.");
         }
+
+        // Add the new sound object to the list for tracking
+        sounds.Add(newSound);
     }
+    else
+    {
+        Debug.LogWarning("soundCreater prefab is not assigned.");
+    }
+}
 
     void OnCollisionEnter(Collision collision)
     {
+        Debug.Log("Collision detected");
+
         // Call the method to create a sound at the collision point
         GetComponent<Creator>().CreateSound(collision.contacts[0].point,collision.gameObject.name,gameObject.name);
     }
