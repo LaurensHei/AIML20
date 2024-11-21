@@ -57,7 +57,7 @@ public class Creator : MonoBehaviour
         // Instantiate a new sound object at the given position
         GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
         newSound.transform.localScale = Vector3.one;
-        newSound.name = fromName + " " + toName;
+        newSound.name = "sound " + fromName + " " + toName;
 
         // Ensure the Collider exists and set it to be a Trigger
         Collider collider = newSound.GetComponent<Collider>();
