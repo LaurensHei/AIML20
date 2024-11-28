@@ -596,10 +596,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1272573441}
-    - targetCorrespondingSourceObject: {fileID: 1131626411948014, guid: 54f3340298537426e96a6cc530e2d5d8,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1472316398}
     - targetCorrespondingSourceObject: {fileID: 1095606497496374, guid: 54f3340298537426e96a6cc530e2d5d8,
         type: 3}
       insertIndex: -1
@@ -653,18 +649,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1472316392}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1472316398
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 642512086}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1472316406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -689,6 +673,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AgentTransform: {fileID: 0}
+  SensorName: SoundSensor
+  DetectionRadius: 50
 --- !u!1 &1592566229
 GameObject:
   m_ObjectHideFlags: 0
@@ -909,6 +896,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AgentTransform: {fileID: 0}
+  SensorName: SoundSensor
+  DetectionRadius: 50
 --- !u!1 &2018004867 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1095606497496374, guid: 54f3340298537426e96a6cc530e2d5d8,
@@ -939,6 +929,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  AgentTransform: {fileID: 0}
+  SensorName: SoundSensor
+  DetectionRadius: 50
 --- !u!1 &2025614756 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1682753582128710, guid: 54f3340298537426e96a6cc530e2d5d8,
