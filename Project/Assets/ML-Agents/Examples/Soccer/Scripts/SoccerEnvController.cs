@@ -130,13 +130,11 @@ public class SoccerEnvController : MonoBehaviour
         if (lastTeamBall == "purple")
         {
             purpleTeamScore += 1;
-            Debug.LogWarning($"Purple team score: {purpleTeamScore}");
         }
         if (lastTeamBall == "blue") 
         {
             blueTeamScore -=0;
             lastTeamBall = "purple";
-            Debug.LogWarning($"Blue score: {blueTeamScore}");
         }
         else {
             Debug.LogWarning("no team at ball");
@@ -149,13 +147,11 @@ public class SoccerEnvController : MonoBehaviour
         if (lastTeamBall == "blue")
         {
             blueTeamScore += 1;
-            Debug.LogWarning($"Blue score: {blueTeamScore}");
         }
         if (lastTeamBall == "purple")
         {
             purpleTeamScore -= 0;
             lastTeamBall = "blue";
-            Debug.LogWarning($"Purple team score: {purpleTeamScore}");
         }
         else {
             Debug.LogWarning("no team at ball");
@@ -192,7 +188,6 @@ public class SoccerEnvController : MonoBehaviour
         if (scoreText != null)
         {
             scoreText.text = $"Blue Team: {blueTeamScore} \nPurple Team: {purpleTeamScore}";
-            Debug.LogWarning("Score updated: ");
         }
         else
         {
