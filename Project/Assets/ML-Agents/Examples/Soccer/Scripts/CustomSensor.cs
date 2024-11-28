@@ -1,11 +1,19 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using Unity.MLAgents.Sensors;
 public class CustomSensor : MonoBehaviour
 {
- void OnTriggerEnter(Collider other) {
-        // Check if the trigger is caused by a sound sphere
+    private SoundSensor soundSensor;
+    
+    private const int observationSize = 10; // Customize based on your needs
+
+    void Start()
+    {
+        soundSensor = new SoundSensor(observationSize, "PlayerSoundSensor");
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
         if (other.gameObject.name.Contains("sound"))
         {
             Debug.Log("Player entered the sound area!");
@@ -15,9 +23,24 @@ public class CustomSensor : MonoBehaviour
 
     void HandleSoundDetection(GameObject soundSource)
     {
-        // Custom logic when a sound sphere is detected
-        Debug.Log("Sound detected from: " + soundSource.name);
+        // Calculate sound intensity based on distance or other parameters
+        float soundIntensity = CalculateSoundIntensity(soundSource.transform.position);
 
-        // Example: Trigger a sound or an alert
+        // Add observation to the sound sensor
+        soundSensor.AddSoundObservation(soundIntensity);
+
+        Debug.Log("Sound detected from: " + soundSource.name + " with intensity: " + soundIntensity);
+    }
+
+    float CalculateSoundIntensity(Vector3 soundSourcePosition)
+    {
+        float distance = Vector3.Distance(transform.position, soundSourcePosition);
+        return Mathf.Clamp01(1.0f / distance); // Inverse relationship with distance
+    }
+
+    void Update()
+    {
+        // Call Update on the sensor to clear observations at the start of a new frame
+        soundSensor.Update();
     }
 }

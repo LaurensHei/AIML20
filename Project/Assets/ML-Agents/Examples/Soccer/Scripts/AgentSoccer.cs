@@ -2,6 +2,7 @@ using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
+using Unity.MLAgents.Sensors;
 
 public enum Team
 {
@@ -45,7 +46,7 @@ public class AgentSoccer : Agent
     BehaviorParameters m_BehaviorParameters;
     public Vector3 initialPos;
     public float rotSign;
-
+    private SoundSensorComponent soundSensorComponent; 
     EnvironmentParameters m_ResetParams;
 
     public override void Initialize()
@@ -225,7 +226,27 @@ public class AgentSoccer : Agent
             c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
         }
     }
+    public override void CollectObservations(VectorSensor sensor)
+        {
+            if (soundSensorComponent != null)
+        {
+            // Get sound data from the SoundSensorComponent
+            float[] soundData = soundSensorComponent.GetSensorData();
+            Debug.Log($"SoundSensorComponent Observations: {string.Join(", ", soundData)}");
 
+            // Add sound data as observations
+            foreach (var data in soundData)
+            {
+                sensor.AddObservation(data);
+            }
+        }
+        else
+        {
+            Debug.LogWarning("SoundSensorComponent is not attached to the agent.");
+        }
+        }
+
+    
     public override void OnEpisodeBegin()
     {
         m_BallTouch = m_ResetParams.GetWithDefault("ball_touch", 0);
