@@ -111,13 +111,13 @@ public class SoccerEnvController : MonoBehaviour
         {
             m_BlueAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
             m_PurpleAgentGroup.AddGroupReward(-1);
-            blueTeamScore += 5;
+            blueTeamScore += 3;
         }
-        else
+        if (scoredTeam == Team.Purple)
         {
             m_PurpleAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
             m_BlueAgentGroup.AddGroupReward(-1);
-            purpleTeamScore += 5;
+            purpleTeamScore += 3;
         }
         m_PurpleAgentGroup.EndGroupEpisode();
         m_BlueAgentGroup.EndGroupEpisode();
@@ -127,16 +127,16 @@ public class SoccerEnvController : MonoBehaviour
 
     public void purplePlayerTouched(Team teamAtBall)
     {
-        if (lastTeamBall == "blue") 
-        {
-            blueTeamScore -=5;
-            lastTeamBall = "purple";
-            Debug.LogWarning($"Blue score: {blueTeamScore}");
-        }
         if (lastTeamBall == "purple")
         {
-            purpleTeamScore += 5;
+            purpleTeamScore += 1;
             Debug.LogWarning($"Purple team score: {purpleTeamScore}");
+        }
+        if (lastTeamBall == "blue") 
+        {
+            blueTeamScore -=0;
+            lastTeamBall = "purple";
+            Debug.LogWarning($"Blue score: {blueTeamScore}");
         }
         else {
             Debug.LogWarning("no team at ball");
@@ -148,12 +148,12 @@ public class SoccerEnvController : MonoBehaviour
     {
         if (lastTeamBall == "blue")
         {
-            blueTeamScore += 5;
+            blueTeamScore += 1;
             Debug.LogWarning($"Blue score: {blueTeamScore}");
         }
         if (lastTeamBall == "purple")
         {
-            purpleTeamScore -= 5;
+            purpleTeamScore -= 0;
             lastTeamBall = "blue";
             Debug.LogWarning($"Purple team score: {purpleTeamScore}");
         }
@@ -191,7 +191,7 @@ public class SoccerEnvController : MonoBehaviour
     {
         if (scoreText != null)
         {
-            scoreText.text = $"Blue Team: {blueTeamScore} - Purple Team: {purpleTeamScore}";
+            scoreText.text = $"Blue Team: {blueTeamScore} \nPurple Team: {purpleTeamScore}";
             Debug.LogWarning("Score updated: ");
         }
         else
