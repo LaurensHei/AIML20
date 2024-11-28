@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class SoccerEnvController : MonoBehaviour
 {
@@ -47,6 +49,12 @@ public class SoccerEnvController : MonoBehaviour
 
     private int m_ResetTimer;
 
+    public int blueTeamScore = 0; // performance count blue team
+    public int purpleTeamScore = 0; // performance count purple team
+    public string lastTeamBall;
+
+    public TMP_Text scoreText;
+
     void Start()
     {
 
@@ -70,6 +78,7 @@ public class SoccerEnvController : MonoBehaviour
                 m_PurpleAgentGroup.RegisterAgent(item.Agent);
             }
         }
+        scoreText.text = "Blue team: 0 - Purple team: 0";
         ResetScene();
     }
 
@@ -102,16 +111,56 @@ public class SoccerEnvController : MonoBehaviour
         {
             m_BlueAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
             m_PurpleAgentGroup.AddGroupReward(-1);
+            blueTeamScore += 3;
         }
-        else
+        if (scoredTeam == Team.Purple)
         {
             m_PurpleAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
             m_BlueAgentGroup.AddGroupReward(-1);
+            purpleTeamScore += 3;
         }
         m_PurpleAgentGroup.EndGroupEpisode();
         m_BlueAgentGroup.EndGroupEpisode();
         ResetScene();
 
+    }
+
+    public void purplePlayerTouched(Team teamAtBall)
+    {
+        if (lastTeamBall == "purple")
+        {
+            purpleTeamScore += 1;
+            Debug.LogWarning($"Purple team score: {purpleTeamScore}");
+        }
+        if (lastTeamBall == "blue") 
+        {
+            blueTeamScore -=0;
+            lastTeamBall = "purple";
+            Debug.LogWarning($"Blue score: {blueTeamScore}");
+        }
+        else {
+            Debug.LogWarning("no team at ball");
+            lastTeamBall = "purple";
+        }
+    }
+
+    public void bluePlayerTouched(Team teamAtBall)
+    {
+        if (lastTeamBall == "blue")
+        {
+            blueTeamScore += 1;
+            Debug.LogWarning($"Blue score: {blueTeamScore}");
+        }
+        if (lastTeamBall == "purple")
+        {
+            purpleTeamScore -= 0;
+            lastTeamBall = "blue";
+            Debug.LogWarning($"Purple team score: {purpleTeamScore}");
+        }
+        else {
+            Debug.LogWarning("no team at ball");
+            lastTeamBall = "blue";
+        }
     }
 
 
@@ -134,5 +183,22 @@ public class SoccerEnvController : MonoBehaviour
 
         //Reset Ball
         ResetBall();
+        DisplayScores();
     }
+
+
+    public void DisplayScores() 
+    {
+        if (scoreText != null)
+        {
+            scoreText.text = $"Blue Team: {blueTeamScore} \nPurple Team: {purpleTeamScore}";
+            Debug.LogWarning("Score updated: ");
+        }
+        else
+        {
+            Debug.LogWarning("scoreText is null");
+        }
+        
+    }
+
 }

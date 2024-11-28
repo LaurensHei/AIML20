@@ -211,6 +211,7 @@ public class AgentSoccer : Agent
     /// </summary>
     void OnCollisionEnter(Collision c)
     {
+        
         var force = k_Power * m_KickPower;
         if (position == Position.Goalie)
         {
