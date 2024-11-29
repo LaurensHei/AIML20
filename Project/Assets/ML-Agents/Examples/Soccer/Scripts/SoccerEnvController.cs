@@ -3,6 +3,7 @@ using Unity.MLAgents;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.IO; 
 
 public class SoccerEnvController : MonoBehaviour
 {
@@ -54,9 +55,15 @@ public class SoccerEnvController : MonoBehaviour
     public string lastTeamBall;
 
     public TMP_Text scoreText;
+    private float timeLastWrite = 0f;
+    public float writeInterval = 10f;
+
+    private string directoryPath;
+    private string filePath = "Assets/ML-Agents/Examples/Soccer/Prefabs/scores.txt";
 
     void Start()
     {
+
 
         m_SoccerSettings = FindObjectOfType<SoccerSettings>();
         // Initialize TeamManager
@@ -79,17 +86,45 @@ public class SoccerEnvController : MonoBehaviour
             }
         }
         scoreText.text = "Blue team: 0 - Purple team: 0";
+
+        string directoryPath = Path.GetDirectoryName(filePath);
+
+        if (!Directory.Exists(directoryPath))
+        {
+            Directory.CreateDirectory(directoryPath);
+            Debug.Log($"Directory created at {directoryPath}");
+        }
+
+        try
+        {
+            if (File.Exists(filePath))
+            {
+                File.WriteAllText(filePath, "");
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Failed to clear the scores file: {ex.Message}");
+        }
         ResetScene();
     }
 
     void FixedUpdate()
     {
         m_ResetTimer += 1;
+        timeLastWrite += Time.fixedDeltaTime; 
+
         if (m_ResetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
         {
             m_BlueAgentGroup.GroupEpisodeInterrupted();
             m_PurpleAgentGroup.GroupEpisodeInterrupted();
             ResetScene();
+        }
+        // Check if it's time ot write the scores to the file.
+        if (timeLastWrite >= writeInterval)
+        {
+            WriteScoresTofile();
+            timeLastWrite = 0f; // Reset timer
         }
     }
 
@@ -194,6 +229,20 @@ public class SoccerEnvController : MonoBehaviour
             Debug.LogWarning("scoreText is null");
         }
         
+    }
+
+    private void WriteScoresTofile()
+    {
+        string content = $"Time: {Time.time:F2}, Blue Team Score: {blueTeamScore}, Purple Team Score {purpleTeamScore}\n";
+
+        try
+        {   
+            File.AppendAllText(filePath, content);
+            Debug.Log($"Scores written to {filePath}");
+        } catch (System.Exception ex) 
+        {
+            Debug.LogError($"Failed to write scores to the file: {ex.Message}");
+        }
     }
 
 }
