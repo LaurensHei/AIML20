@@ -78,15 +78,11 @@ namespace Unity.MLAgents.Sensors
                     m_DetectedSounds.Add(infoVector);
                     writer.Add(infoVector);
 
-                    string logMessage = $"[{Time.time:F2}] : Detected sound {soundSphere.name} at {posSound}";
-                    Debug.Log(logMessage);
-                    File.AppendAllText(m_LogFilePath, logMessage + "\n");
-
                 }
             }
 
             // Return the total number of elements written
-           
+            
             return m_DetectedSounds.Count;
         }
 

@@ -11,15 +11,37 @@ public class Sound : MonoBehaviour
     
     void Update()
     {
+        
         // Scale the sound sphere over time
         transform.localScale += scaleChange * soundSpeed;
-        
+        AdjustColorIntensityBasedOnSize(gameObject,1f);
         // If the sound sphere exceeds the defined range, destroy it
         if (transform.localScale.x > soundRange)
         {
             Destroy(gameObject); // Destroy the sound sphere when it reaches max size
             SoundManager.Instance.UnregisterSoundSphere(gameObject);
-
         }
     }
+
+    private void AdjustColorIntensityBasedOnSize(GameObject sphere, float scaleFactor)
+{
+    Renderer renderer = sphere.GetComponent<Renderer>();
+    if (renderer != null)
+    {
+        // Get the current color
+        Color originalColor = renderer.material.color;
+
+        // Calculate intensity factor: smaller size => brighter, larger size => darker
+        float intensityFactor = Mathf.Clamp(1.0f / scaleFactor, 0.2f, 1.0f); // Limit to prevent overly bright/dark colors
+
+        // Adjust color intensity
+        Color adjustedColor = originalColor * intensityFactor;
+
+        // Keep the original alpha (transparency)
+        adjustedColor.a = originalColor.a;
+
+        // Apply the adjusted color
+        renderer.material.color = adjustedColor;
+    }
+}
 }

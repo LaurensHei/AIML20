@@ -488,7 +488,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 0
+  IsTarget: 0
 --- !u!1 &642512086 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1131626411948014, guid: 54f3340298537426e96a6cc530e2d5d8,
@@ -507,7 +507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 0
+  IsTarget: 0
 --- !u!1 &1402393185 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6257467487437560250, guid: 54f3340298537426e96a6cc530e2d5d8,
@@ -598,6 +598,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1272573441}
+    - targetCorrespondingSourceObject: {fileID: 1131626411948014, guid: 54f3340298537426e96a6cc530e2d5d8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1472316399}
     - targetCorrespondingSourceObject: {fileID: 1095606497496374, guid: 54f3340298537426e96a6cc530e2d5d8,
         type: 3}
       insertIndex: -1
@@ -610,6 +614,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2001108291}
+    - targetCorrespondingSourceObject: {fileID: 8360301818957399454, guid: 54f3340298537426e96a6cc530e2d5d8,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2001108293}
     - targetCorrespondingSourceObject: {fileID: 6257467487437560250, guid: 54f3340298537426e96a6cc530e2d5d8,
         type: 3}
       insertIndex: -1
@@ -647,6 +655,21 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1472316392}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1472316399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642512086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AgentTransform: {fileID: 345889606}
+  SensorName: SoundSensor
+  DetectionRadius: 10.5
 --- !u!114 &1472316406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -659,7 +682,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 0
+  IsTarget: 0
 --- !u!114 &1472316407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -672,9 +695,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AgentTransform: {fileID: 0}
+  AgentTransform: {fileID: 172684308}
   SensorName: SoundSensor
-  DetectionRadius: 50
+  DetectionRadius: 10.5
 --- !u!1 &1592566229
 GameObject:
   m_ObjectHideFlags: 0
@@ -883,7 +906,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 0
+  IsTarget: 0
+--- !u!114 &2001108293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2001108283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AgentTransform: {fileID: 255413951}
+  SensorName: SoundSensor
+  DetectionRadius: 10.5
 --- !u!1 &2018004867 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1095606497496374, guid: 54f3340298537426e96a6cc530e2d5d8,
@@ -902,7 +940,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 0
+  IsTarget: 0
 --- !u!114 &2018004876
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -915,9 +953,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AgentTransform: {fileID: 0}
+  AgentTransform: {fileID: 1864330054}
   SensorName: SoundSensor
-  DetectionRadius: 50
+  DetectionRadius: 11.2
 --- !u!1 &2025614756 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1682753582128710, guid: 54f3340298537426e96a6cc530e2d5d8,
@@ -936,7 +974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isTarget: 1
+  IsTarget: 0
 --- !u!1 &2061768988
 GameObject:
   m_ObjectHideFlags: 0

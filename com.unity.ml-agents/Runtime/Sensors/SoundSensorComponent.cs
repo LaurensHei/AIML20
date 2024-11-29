@@ -9,7 +9,7 @@ namespace Unity.MLAgents.Sensors
     {
         public Transform AgentTransform;
         public string SensorName = "SoundSensor";
-        [Range(1f, 100f)] public float DetectionRadius = 50f;
+        [Range(1f, 100f)] public float DetectionRadius = 10f;
 
         private SoundSensor m_Sensor;
 

@@ -95,10 +95,6 @@ public class AgentSoccer : Agent
             soundSensorComponent = gameObject.AddComponent<SoundSensorComponent>();
         }
 
-        // Set AgentTransform before the sensor initializes
-        soundSensorComponent.AgentTransform = transform;
-        soundSensorComponent.SensorName = "AgentSoundSensor";
-        soundSensorComponent.DetectionRadius = 50f; // Adjust radius as needed
     }
 
     public override void CollectObservations(VectorSensor sensor)
