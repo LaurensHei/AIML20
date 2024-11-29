@@ -7,7 +7,7 @@ public class SoundManager : MonoBehaviour
 
     public GameObject soundSpherePrefab; // Prefab for the sound sphere
     private List<GameObject> soundSpheres = new List<GameObject>(); // List to store active sound spheres
-
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -22,13 +22,12 @@ public class SoundManager : MonoBehaviour
     public void CreateSound(Vector3 position, string obj1, string obj2)
     {
         // Instantiate a new sound sphere at the given position
+        
         GameObject newSound = Instantiate(soundSpherePrefab, position, Quaternion.identity);
-
-        
-        
         
         // Optionally, set additional properties on the sound sphere (e.g., a unique name, etc.)
-        newSound.name = "SoundSphere_" + obj1 + "_" + obj2; // Unique name based on objects
+        newSound.name = "SoundSphere_" + obj1 + " " + obj2+"_"; // Unique name based on objects
+        
         // Add it to the list of sound spheres
         RegisterSoundSphere(newSound);
     }
@@ -86,4 +85,6 @@ public class SoundManager : MonoBehaviour
             soundSpheres.Remove(soundSphere);
         }
     }
+
+
 }

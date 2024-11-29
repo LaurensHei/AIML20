@@ -34,7 +34,7 @@ namespace Unity.MLAgents.Sensors
         /// Retrieves the detected sound positions as a list of Vector3.
         /// </summary>
         /// <returns>A list of detected sound positions.</returns>
-        public List<Vector3> GetSensorData()
+        public List<Vector4> GetSensorData()
         {
             return m_Sensor?.GetDetectedSounds();
         }

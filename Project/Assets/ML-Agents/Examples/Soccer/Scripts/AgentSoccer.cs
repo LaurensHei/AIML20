@@ -5,7 +5,6 @@ using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
 using System.Collections.Generic;
 
-
 public enum Team
 {
     Blue = 0,
@@ -107,13 +106,13 @@ public class AgentSoccer : Agent
         if (soundSensorComponent != null)
         {
             // Get sound positions from the SoundSensorComponent
-            List<Vector3> soundData = soundSensorComponent.GetSensorData();
+            List<Vector4> soundData = soundSensorComponent.GetSensorData();
 
             // Add each sound position as observations
-            foreach (var position in soundData)
+            foreach (var vector in soundData)
             {
-                sensor.AddObservation(position);
-                Debug.Log("Collected data: "+position);
+                sensor.AddObservation(Vector4ToIList(vector));
+                Debug.Log("Collected data: " + vector);
             }
         }
         else
@@ -123,6 +122,10 @@ public class AgentSoccer : Agent
 
     }
 
+    IList<float> Vector4ToIList(Vector4 vector)
+    {
+        return new List<float> { vector.x, vector.y, vector.z, vector.w }; // Use lowercase 'x', 'y', 'z', 'w'
+    }
 
     public void MoveAgent(ActionSegment<int> act)
     {
@@ -205,11 +208,7 @@ public class AgentSoccer : Agent
             dir = dir.normalized;
             c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
         }
-        if (c.gameObject.CompareTag("Sound")){
-            
-            // Add the sound position as an observation
-            
-        }
+
 
     }
 
