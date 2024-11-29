@@ -3,6 +3,8 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents.Sensors;
+using System.Collections.Generic;
+
 
 public enum Team
 {
@@ -40,80 +42,88 @@ public class AgentSoccer : Agent
     EnvironmentParameters m_ResetParams;
     public Unity.MLAgents.Sensors.SoundSensorComponent soundSensorComponent;
     public override void Initialize()
-{
-    SoccerEnvController envController = GetComponentInParent<SoccerEnvController>();
-    if (envController != null)
     {
-        m_Existential = 1f / envController.MaxEnvironmentSteps;
-    }
-    else
-    {
-        m_Existential = 1f / MaxStep;
-    }
+        SoccerEnvController envController = GetComponentInParent<SoccerEnvController>();
+        if (envController != null)
+        {
+            m_Existential = 1f / envController.MaxEnvironmentSteps;
+        }
+        else
+        {
+            m_Existential = 1f / MaxStep;
+        }
 
-    m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
-    if (m_BehaviorParameters.TeamId == (int)Team.Blue)
-    {
-        team = Team.Blue;
-        initialPos = new Vector3(transform.position.x - 5f, .5f, transform.position.z);
-        rotSign = 1f;
-    }
-    else
-    {
-        team = Team.Purple;
-        initialPos = new Vector3(transform.position.x + 5f, .5f, transform.position.z);
-        rotSign = -1f;
-    }
+        m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
+        if (m_BehaviorParameters.TeamId == (int)Team.Blue)
+        {
+            team = Team.Blue;
+            initialPos = new Vector3(transform.position.x - 5f, .5f, transform.position.z);
+            rotSign = 1f;
+        }
+        else
+        {
+            team = Team.Purple;
+            initialPos = new Vector3(transform.position.x + 5f, .5f, transform.position.z);
+            rotSign = -1f;
+        }
 
-    if (position == Position.Goalie)
-    {
-        m_LateralSpeed = 1.0f;
-        m_ForwardSpeed = 1.0f;
-    }
-    else if (position == Position.Striker)
-    {
-        m_LateralSpeed = 0.3f;
-        m_ForwardSpeed = 1.3f;
-    }
-    else
-    {
-        m_LateralSpeed = 0.3f;
-        m_ForwardSpeed = 1.0f;
-    }
+        if (position == Position.Goalie)
+        {
+            m_LateralSpeed = 1.0f;
+            m_ForwardSpeed = 1.0f;
+        }
+        else if (position == Position.Striker)
+        {
+            m_LateralSpeed = 0.3f;
+            m_ForwardSpeed = 1.3f;
+        }
+        else
+        {
+            m_LateralSpeed = 0.3f;
+            m_ForwardSpeed = 1.0f;
+        }
 
-    m_SoccerSettings = FindObjectOfType<SoccerSettings>();
-    agentRb = GetComponent<Rigidbody>();
-    agentRb.maxAngularVelocity = 500;
+        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
+        agentRb = GetComponent<Rigidbody>();
+        agentRb.maxAngularVelocity = 500;
 
-    m_ResetParams = Academy.Instance.EnvironmentParameters;
+        m_ResetParams = Academy.Instance.EnvironmentParameters;
 
-    // Dynamically add SoundSensorComponent
-    soundSensorComponent = gameObject.AddComponent<SoundSensorComponent>();
-    soundSensorComponent.AgentTransform = transform;
-    soundSensorComponent.SensorName = "AgentSoundSensor";
-    soundSensorComponent.DetectionRadius = 50f; // Set a default radius or adjust as needed
-}
+        // Dynamically add or retrieve SoundSensorComponent
+        soundSensorComponent = gameObject.GetComponent<SoundSensorComponent>();
+        if (soundSensorComponent == null)
+        {
+            soundSensorComponent = gameObject.AddComponent<SoundSensorComponent>();
+        }
+
+        // Set AgentTransform before the sensor initializes
+        soundSensorComponent.AgentTransform = transform;
+        soundSensorComponent.SensorName = "AgentSoundSensor";
+        soundSensorComponent.DetectionRadius = 50f; // Adjust radius as needed
+    }
 
     public override void CollectObservations(VectorSensor sensor)
     {
         if (soundSensorComponent != null)
-    {
-        // Get sound data from the SoundSensorComponent
-        float[] soundData = soundSensorComponent.GetSensorData();
-
-        // Add sound data as observations
-        foreach (var data in soundData)
         {
-            sensor.AddObservation(data);
+            // Get sound positions from the SoundSensorComponent
+            List<Vector3> soundData = soundSensorComponent.GetSensorData();
+
+            // Add each sound position as observations
+            foreach (var position in soundData)
+            {
+                sensor.AddObservation(position);
+                Debug.Log("Collected data: "+position);
+            }
         }
-    }
-    else
-    {
-        Debug.LogWarning("SoundSensorComponent is not attached to the agent.");
-    }
+        else
+        {
+            Debug.LogWarning("SoundSensorComponent is not attached to the agent.");
+        }
+
     }
 
-    
+
     public void MoveAgent(ActionSegment<int> act)
     {
         var dirToGo = Vector3.zero;
@@ -195,11 +205,23 @@ public class AgentSoccer : Agent
             dir = dir.normalized;
             c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
         }
-        
+        if (c.gameObject.CompareTag("Sound")){
+            
+            // Add the sound position as an observation
+            
+        }
+
     }
 
     public override void OnEpisodeBegin()
     {
         m_BallTouch = m_ResetParams.GetWithDefault("ball_touch", 0);
+
+        if (soundSensorComponent != null)
+        {
+            var soundSensor = soundSensorComponent.GetSensor();
+            soundSensor?.Reset(); // Reset the sensor if it exists
+        }
     }
+
 }

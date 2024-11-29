@@ -24,11 +24,13 @@ public class SoundManager : MonoBehaviour
         // Instantiate a new sound sphere at the given position
         GameObject newSound = Instantiate(soundSpherePrefab, position, Quaternion.identity);
 
-        // Add it to the list of sound spheres
-        soundSpheres.Add(newSound);
-
+        
+        
+        
         // Optionally, set additional properties on the sound sphere (e.g., a unique name, etc.)
         newSound.name = "SoundSphere_" + obj1 + "_" + obj2; // Unique name based on objects
+        // Add it to the list of sound spheres
+        RegisterSoundSphere(newSound);
     }
 
     // Update all sound spheres in the scene
@@ -48,8 +50,40 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the list of sound spheres, excluding destroyed or null objects.
+    /// </summary>
+    /// <returns>List of active sound spheres.</returns>
     public List<GameObject> GetSoundSpheres()
     {
+        // Remove any destroyed or null objects from the list
+        soundSpheres.RemoveAll(sphere => sphere == null);
+
         return soundSpheres;
+    }
+
+
+    /// <summary>
+    /// Adds a sound sphere to the manager.
+    /// </summary>
+    /// <param name="soundSphere">The sound sphere to add.</param>
+    public void RegisterSoundSphere(GameObject soundSphere)
+    {
+        if (soundSphere != null && !soundSpheres.Contains(soundSphere))
+        {
+            soundSpheres.Add(soundSphere);
+        }
+    }
+
+    /// <summary>
+    /// Removes a sound sphere from the manager.
+    /// </summary>
+    /// <param name="soundSphere">The sound sphere to remove.</param>
+    public void UnregisterSoundSphere(GameObject soundSphere)
+    {
+        if (soundSpheres.Contains(soundSphere))
+        {
+            soundSpheres.Remove(soundSphere);
+        }
     }
 }

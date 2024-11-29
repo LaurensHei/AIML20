@@ -608,10 +608,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2001108291}
-    - targetCorrespondingSourceObject: {fileID: 8360301818957399454, guid: 54f3340298537426e96a6cc530e2d5d8,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2001108292}
     - targetCorrespondingSourceObject: {fileID: 6257467487437560250, guid: 54f3340298537426e96a6cc530e2d5d8,
         type: 3}
       insertIndex: -1
@@ -884,21 +880,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4186b2a9b2cf33640a4e446a55aadaa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &2001108292
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2001108283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b835d321d0b2604f94806d665a9cd4b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AgentTransform: {fileID: 0}
-  SensorName: SoundSensor
-  DetectionRadius: 50
 --- !u!1 &2018004867 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1095606497496374, guid: 54f3340298537426e96a6cc530e2d5d8,
@@ -1034,12 +1015,12 @@ PrefabInstance:
     - target: {fileID: 3501385249796602346, guid: dc51cd9ed3f88d94994664dcfcfbf788,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.41
+      value: 0.41
       objectReference: {fileID: 0}
     - target: {fileID: 3501385249796602346, guid: dc51cd9ed3f88d94994664dcfcfbf788,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.7765197
+      value: 1.17
       objectReference: {fileID: 0}
     - target: {fileID: 3501385249796602346, guid: dc51cd9ed3f88d94994664dcfcfbf788,
         type: 3}

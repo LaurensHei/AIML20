@@ -6,7 +6,7 @@ public class SoundTrigger : MonoBehaviour
 
     void Start()
     {
-        soundManager = FindObjectOfType<SoundManager>(); // Get the SoundManager instance
+        soundManager = SoundManager.Instance; // Get the SoundManager instance
     }
 
     void OnCollisionEnter(Collision collision)

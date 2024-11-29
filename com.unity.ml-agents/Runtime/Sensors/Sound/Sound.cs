@@ -6,7 +6,7 @@ public class Sound : MonoBehaviour
 {
     private Vector3 scaleChange = new Vector3(0.01f, 0.01f, 0.01f); // Increment for scaling
     private float soundRange = 20f; // Max size of the sound sphere
-    private float soundSpeed = 400f; // Speed of scaling
+    private float soundSpeed = 900f; // Speed of scaling
     
     
     void Update()
@@ -18,6 +18,8 @@ public class Sound : MonoBehaviour
         if (transform.localScale.x > soundRange)
         {
             Destroy(gameObject); // Destroy the sound sphere when it reaches max size
+            SoundManager.Instance.UnregisterSoundSphere(gameObject);
+
         }
     }
 }
