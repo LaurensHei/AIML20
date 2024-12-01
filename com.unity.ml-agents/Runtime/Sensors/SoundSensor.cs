@@ -67,7 +67,7 @@ namespace Unity.MLAgents.Sensors
             {
                 Vector3 posSound = soundSphere.transform.position;
                 float distance = Vector3.Distance(m_AgentTransform.position, posSound);
-                if (distance <= m_DetectionRadius && soundSphere.name.Contains("target"))
+                if (distance <= m_DetectionRadius)
                 {
 
                     float x = posSound.x;
@@ -77,7 +77,6 @@ namespace Unity.MLAgents.Sensors
                     Vector4 infoVector = new Vector4(x,y,z,id);
                     m_DetectedSounds.Add(infoVector);
                     writer.Add(infoVector);
-
                 }
             }
 

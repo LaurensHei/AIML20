@@ -93,30 +93,32 @@ public class AgentSoccer : Agent
         if (soundSensorComponent == null)
         {
             soundSensorComponent = gameObject.AddComponent<SoundSensorComponent>();
+            Debug.Log("___Sensor component initilized____");
         }
+        
 
     }
 
-    public override void CollectObservations(VectorSensor sensor)
-    {
-        if (soundSensorComponent != null)
-        {
-            // Get sound positions from the SoundSensorComponent
-            List<Vector4> soundData = soundSensorComponent.GetSensorData();
+    // public override void CollectObservations(VectorSensor sensor)
+    // {
+    //     if (soundSensorComponent != null)
+    //     {
+    //         // Get sound positions from the SoundSensorComponent
+    //         List<Vector4> soundData = soundSensorComponent.GetSensorData();
+            
+    //         // Add each sound position as observations
+    //         foreach (var vector in soundData)
+    //         {
+    //             sensor.AddObservation(Vector4ToIList(vector));
+    //             Debug.Log("Collected data: " + vector);
+    //         }
+    //     }
+    //     else
+    //     {
+    //         Debug.LogWarning("SoundSensorComponent is not attached to the agent.");
+    //     }
 
-            // Add each sound position as observations
-            foreach (var vector in soundData)
-            {
-                sensor.AddObservation(Vector4ToIList(vector));
-                Debug.Log("Collected data: " + vector);
-            }
-        }
-        else
-        {
-            Debug.LogWarning("SoundSensorComponent is not attached to the agent.");
-        }
-
-    }
+    // }
 
     IList<float> Vector4ToIList(Vector4 vector)
     {

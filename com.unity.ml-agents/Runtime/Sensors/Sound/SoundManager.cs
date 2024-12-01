@@ -4,7 +4,7 @@ using System.Collections.Generic;
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; }
-
+    
     public GameObject soundSpherePrefab; // Prefab for the sound sphere
     private List<GameObject> soundSpheres = new List<GameObject>(); // List to store active sound spheres
     
