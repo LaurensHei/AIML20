@@ -1,33 +1,29 @@
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class SoundManager : MonoBehaviour
 {
-    public static SoundManager Instance { get; private set; }
-    
     public GameObject soundSpherePrefab; // Prefab for the sound sphere
     private List<GameObject> soundSpheres = new List<GameObject>(); // List to store active sound spheres
-    
-    private void Awake()
+
+    void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject); // Ensure there's only one instance
-            return;
-        }
-        Instance = this;
+
     }
 
     // Method to create a new sound at a given position
     public void CreateSound(Vector3 position, string obj1, string obj2)
     {
         // Instantiate a new sound sphere at the given position
-        
+
         GameObject newSound = Instantiate(soundSpherePrefab, position, Quaternion.identity);
-        
+
         // Optionally, set additional properties on the sound sphere (e.g., a unique name, etc.)
-        newSound.name = "SoundSphere_" + obj1 + " " + obj2+"_"; // Unique name based on objects
-        
+        newSound.name = "SoundSphere_" + obj1 + " " + obj2 + "_"; // Unique name based on objects
+        newSound.GetComponent<Sound>().Initialize(this);
+        newSound.GetComponent<Sound>().Add();
+
         // Add it to the list of sound spheres
         RegisterSoundSphere(newSound);
     }
@@ -47,6 +43,7 @@ public class SoundManager : MonoBehaviour
                 continue;
             }
         }
+
     }
 
     /// <summary>
@@ -55,8 +52,8 @@ public class SoundManager : MonoBehaviour
     /// <returns>List of active sound spheres.</returns>
     public List<GameObject> GetSoundSpheres()
     {
-        // Remove any destroyed or null objects from the list
-        soundSpheres.RemoveAll(sphere => sphere == null);
+
+        Clean();
 
         return soundSpheres;
     }
@@ -83,8 +80,15 @@ public class SoundManager : MonoBehaviour
         if (soundSpheres.Contains(soundSphere))
         {
             soundSpheres.Remove(soundSphere);
+            Clean();
         }
     }
 
+    // Remove any destroyed or null objects from the list
+    private void Clean()
+    {
+
+        soundSpheres.RemoveAll(sphere => sphere == null);
+    }
 
 }

@@ -14,10 +14,10 @@ namespace Unity.MLAgents.Sensors
         [Header("Visualization")]
         public bool ShowGizmo = true;
         public Color GizmoColor = Color.green;
-        public bool ShowInEditMode = true;
+        public bool ShowInEditMode = false;
 
         private SoundSensor m_Sensor;
-
+        private SoundManager soundManager;
         public override ISensor[] CreateSensors()
         {
             if (AgentTransform == null)
@@ -25,8 +25,14 @@ namespace Unity.MLAgents.Sensors
                 Debug.LogError("Agent Transform is not assigned to SoundSensorComponent.");
                 return null;
             }
+            soundManager = GetComponentInParent<SoundManager>();
 
-            m_Sensor = new SoundSensor(AgentTransform, SensorName, DetectionRadius);
+            if (soundManager == null)
+            {
+                Debug.Log("manager is null here in Component");
+            }
+
+            m_Sensor = new SoundSensor(AgentTransform, SensorName, DetectionRadius, soundManager);
             return new ISensor[] { m_Sensor };
         }
 
@@ -37,8 +43,7 @@ namespace Unity.MLAgents.Sensors
         // Automatically draw the detection radius
         void OnDrawGizmos()
         {
-            // Draw in play mode and edit mode (if ShowInEditMode is true)
-            if (ShowGizmo && AgentTransform != null && (Application.isPlaying || ShowInEditMode))
+            if (ShowGizmo && AgentTransform != null)
             {
                 Gizmos.color = GizmoColor;
                 Gizmos.DrawWireSphere(AgentTransform.position, DetectionRadius);
@@ -52,6 +57,20 @@ namespace Unity.MLAgents.Sensors
             {
                 AgentTransform = transform; // Default to the component's GameObject transform
             }
+        }
+
+        public bool IsHearingSound()
+        {
+            // Assume GetSensorData returns a list of sounds with tags or identifiers
+            List<Vector4> sensorData = GetSensorData();
+            foreach (var sound in sensorData)
+            {
+                if (sound.z < 0) 
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

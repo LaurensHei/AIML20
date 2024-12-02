@@ -8,9 +8,14 @@ public class SoundTrigger : MonoBehaviour
     public bool IsTarget = false;
     void Start()
     {
-        soundManager = SoundManager.Instance; // Get the SoundManager instance
-        if(IsTarget)
+        soundManager = GetComponentInParent<SoundManager>();// Get the SoundManager instance
+        if (soundManager == null)
+        {
+            Debug.LogError("manager is null here in trigger");
+        }
+        if (IsTarget){
             gameObject.name += " target";
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -19,8 +24,8 @@ public class SoundTrigger : MonoBehaviour
         if (soundManager != null)
         {
             Vector3 collisionPoint = collision.contacts[0].point; // Collision point
-        
-            soundManager.CreateSound(collisionPoint, collision.gameObject.name,gameObject.name); 
+
+            soundManager.CreateSound(collisionPoint, collision.gameObject.name, gameObject.name);
         }
     }
 }

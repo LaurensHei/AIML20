@@ -14,13 +14,17 @@ namespace Unity.MLAgents.Sensors
         private List<Vector4> m_DetectedSounds;
 
         private static string m_LogFilePath = Application.dataPath + "/SoundSensorLogs.txt";
-
-        public SoundSensor(Transform agentTransform, string name, float detectionRadius)
+        private SoundManager m_SoundManager;
+        public SoundSensor(Transform agentTransform, string name, float detectionRadius, SoundManager soundManager)
         {
             m_AgentTransform = agentTransform;
             m_Name = name;
             m_DetectionRadius = detectionRadius;
             m_DetectedSounds = new List<Vector4>();
+            m_SoundManager = soundManager;
+
+            if (m_SoundManager == null)
+                Debug.LogError("manager is null here in sensor");
             File.WriteAllText(m_LogFilePath, "Sound Detection Log\n");
         }
 
@@ -48,7 +52,7 @@ namespace Unity.MLAgents.Sensors
         public int Write(ObservationWriter writer)
         {
             m_DetectedSounds.Clear();
-            var soundSpheres = SoundManager.Instance.GetSoundSpheres();
+            var soundSpheres = m_SoundManager.GetSoundSpheres();
 
             // Ensure the agent's transform is valid
             if (m_AgentTransform == null)
@@ -74,14 +78,15 @@ namespace Unity.MLAgents.Sensors
                     float y = posSound.y;
                     float z = posSound.z;
                     float id = GetId(soundSphere.name);
-                    Vector4 infoVector = new Vector4(x,y,z,id);
+                    
+                    Vector4 infoVector = new Vector4(x, y, z, id);
                     m_DetectedSounds.Add(infoVector);
                     writer.Add(infoVector);
                 }
             }
 
             // Return the total number of elements written
-            
+
             return m_DetectedSounds.Count;
         }
 
@@ -123,7 +128,12 @@ namespace Unity.MLAgents.Sensors
             if (!cachedInput.ContainsKey(objectsName))
             {
                 id++;
-                cachedInput.Add(objectsName, id);
+                if(input.Contains("target")){
+                    cachedInput.Add(objectsName, ((id)*(-1))); 
+                }
+                else{
+                    cachedInput.Add(objectsName, id); 
+                }
                 return id;
             }
             return cachedInput[objectsName];

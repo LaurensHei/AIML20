@@ -39,7 +39,10 @@ public class AgentSoccer : Agent
     public float rotSign;
 
     EnvironmentParameters m_ResetParams;
-    public Unity.MLAgents.Sensors.SoundSensorComponent soundSensorComponent;
+    private Unity.MLAgents.Sensors.SoundSensorComponent soundSensorComponent;
+
+
+    Transform ballTransform;
     public override void Initialize()
     {
         SoccerEnvController envController = GetComponentInParent<SoccerEnvController>();
@@ -95,30 +98,13 @@ public class AgentSoccer : Agent
             soundSensorComponent = gameObject.AddComponent<SoundSensorComponent>();
             Debug.Log("___Sensor component initilized____");
         }
-        
 
+        ballTransform = GameObject.FindWithTag("ball").transform;
+        if (ballTransform == null)
+        {
+            Debug.LogError("Ball object not found in the scene!");
+        }
     }
-
-    // public override void CollectObservations(VectorSensor sensor)
-    // {
-    //     if (soundSensorComponent != null)
-    //     {
-    //         // Get sound positions from the SoundSensorComponent
-    //         List<Vector4> soundData = soundSensorComponent.GetSensorData();
-            
-    //         // Add each sound position as observations
-    //         foreach (var vector in soundData)
-    //         {
-    //             sensor.AddObservation(Vector4ToIList(vector));
-    //             Debug.Log("Collected data: " + vector);
-    //         }
-    //     }
-    //     else
-    //     {
-    //         Debug.LogWarning("SoundSensorComponent is not attached to the agent.");
-    //     }
-
-    // }
 
     IList<float> Vector4ToIList(Vector4 vector)
     {
@@ -182,6 +168,14 @@ public class AgentSoccer : Agent
             AddReward(-m_Existential);
         }
         MoveAgent(actionBuffers.DiscreteActions);
+
+        if (soundSensorComponent != null && soundSensorComponent.IsHearingSound())
+        {
+            if (IsMovingToward(ballTransform.position)) // Assuming ballTransform is set up
+            {
+                AddReward(1f); // Reward for moving toward the ball
+            }
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -208,6 +202,7 @@ public class AgentSoccer : Agent
         }
 
 
+
     }
 
     public override void OnEpisodeBegin()
@@ -219,6 +214,16 @@ public class AgentSoccer : Agent
             var soundSensor = soundSensorComponent.GetSensor();
             soundSensor?.Reset(); // Reset the sensor if it exists
         }
+    }
+
+
+    bool IsMovingToward(Vector3 targetPosition)
+    {
+        Vector3 toTarget = (targetPosition - transform.position).normalized;
+        Vector3 agentDirection = agentRb.velocity.normalized;
+
+        float dotProduct = Vector3.Dot(agentDirection, toTarget);
+        return dotProduct > 0.4f; // Adjust threshold for alignment as needed
     }
 
 }
