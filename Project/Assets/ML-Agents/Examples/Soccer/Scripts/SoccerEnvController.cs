@@ -141,7 +141,7 @@ public class SoccerEnvController : MonoBehaviour
     {
         if (lastTeamBall == "blue")
         {
-            purpleTeamScore = Mathf.Min(purpleTeamScore + 0.1f, 20f);
+            // purpleTeamScore = Mathf.Min(purpleTeamScore + 0.1f, 20f);
             m_PurpleAgentGroup.AddGroupReward(0.5f);
             m_BlueAgentGroup.AddGroupReward(-0.5f);
             Debug.Log("Purple team stole the ball. Reward given.");
@@ -150,7 +150,7 @@ public class SoccerEnvController : MonoBehaviour
 
         else if (lastTeamBall == "purple")
         {
-            purpleTeamScore = Mathf.Min(purpleTeamScore + 0.05f, 20f);
+            // purpleTeamScore = Mathf.Min(purpleTeamScore + 0.05f, 20f);
             m_PurpleAgentGroup.AddGroupReward(0.2f);
             Debug.Log("Purple team successful pass. Partial reward given.");
         }
@@ -166,7 +166,7 @@ public class SoccerEnvController : MonoBehaviour
     {
         if (lastTeamBall == "purple")
         {
-            blueTeamScore = Mathf.Min(blueTeamScore + 0.1f, 20f);
+            // blueTeamScore = Mathf.Min(blueTeamScore + 0.1f, 20f);
             m_BlueAgentGroup.AddGroupReward(0.5f);
             m_PurpleAgentGroup.AddGroupReward(-0.5f);
             Debug.Log("Blue team stole the ball. Reward given.");
@@ -175,7 +175,7 @@ public class SoccerEnvController : MonoBehaviour
 
         else if (lastTeamBall == "blue")
         {
-            blueTeamScore = Mathf.Min(blueTeamScore + 0.05f, 20f);
+            // blueTeamScore = Mathf.Min(blueTeamScore + 0.05f, 20f);
             m_BlueAgentGroup.AddGroupReward(0.2f);
             Debug.Log("Blue team successful pass. Partial reward given.");
         }
