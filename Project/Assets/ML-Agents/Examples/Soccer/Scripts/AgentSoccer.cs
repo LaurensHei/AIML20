@@ -47,6 +47,10 @@ public class AgentSoccer : Agent
     private Vector3 lastPosition; // Tracks meaningful movement
     private int actionStepCounter = 0; // Counter for periodic checks
 
+    private bool isRespondingToBallSound = false; 
+    private float responseTimer = 0f;
+    [SerializeField] private float responseDur = 1f;
+
     public override void Initialize()
     {
         SoccerEnvController envController = GetComponentInParent<SoccerEnvController>();
@@ -142,6 +146,25 @@ public class AgentSoccer : Agent
 
     }
 
+    if (isRespondingToBallSound)
+    {
+        // Chase current position of the ball
+        Vector3 dirToBall = (ballTransform.position - transform.position).normalized;
+        float chaseSpeed = 1.0f;
+        agentRb.AddForce(dirToBall * chaseSpeed, ForceMode.VelocityChange);
+
+        // Adjust timer
+        responseTimer -= Time.fixedDeltaTime;
+        if (responseTimer <= 0f)
+        {
+            isRespondingToBallSound = false;
+        }
+    }
+    else
+    {
+        MoveAgent(actionBuffers.DiscreteActions);
+    }
+
     MoveAgent(actionBuffers.DiscreteActions);
 }
    void OnCollisionEnter(Collision c)
@@ -185,6 +208,10 @@ public class AgentSoccer : Agent
     {
         m_BallTouch = m_ResetParams.GetWithDefault("ball_touch", 0);
         soundSensorComponent?.GetSensor()?.Reset();
+
+        // Reset response to sound at the start of an episode
+        isRespondingToBallSound = false;
+        responseTimer = 0f;
     }
 
     bool IsMovingToward(Vector3 targetPosition)
@@ -200,19 +227,15 @@ public class AgentSoccer : Agent
     void OnTriggerEnter(Collider other)
     {
         SoundObject soundObj = other.gameObject.GetComponent<SoundObject>();
-        GameObject soundGameObject = soundObj.gameObject;
+        GameObject soundGameObject = soundObj != null ? soundObj.gameObject : null;
         if (soundObj != null)
         {
             if (soundObj.soundType == "BallCollision")
             {
                 Debug.LogWarning($"{gameObject.name} heard a ball collision from {soundObj.originName}");
 
-                if (ballTransform != null)
-                {
-                    Vector3 directionToBall = (ballTransform.position - transform.position).normalized;
-                    agentRb.AddForce(directionToBall * 10f, ForceMode.VelocityChange);
-
-                }
+                isRespondingToBallSound = true;
+                responseTimer = responseDur;
             } 
             else
             {
