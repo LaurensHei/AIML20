@@ -14,31 +14,27 @@ public class SoccerBallController : MonoBehaviour
     void Start()
     {
         envController = area.GetComponent<SoccerEnvController>();
-<<<<<<< HEAD
-=======
+
         if (envController == null)
         {
             Debug.LogError("SoccerEnvController not found on the area object.");
         }
->>>>>>> rewardSystemChrys
+
     }
 
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.CompareTag(purpleAgentTag))
         {
-<<<<<<< HEAD
-=======
+
             Debug.Log("Ball touched by Purple Agent");
->>>>>>> rewardSystemChrys
+
             envController.purplePlayerTouched(Team.Purple);
         }
         else if (col.gameObject.CompareTag(blueAgentTag))
         {
-<<<<<<< HEAD
-=======
             Debug.Log("Ball touched by Blue Agent");
->>>>>>> rewardSystemChrys
+
             envController.bluePlayerTouched(Team.Blue);
         }
         else if (col.gameObject.CompareTag(blueGoalTag))

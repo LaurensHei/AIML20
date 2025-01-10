@@ -102,24 +102,12 @@ public class AgentSoccer : Agent
         agentRb.AddForce(dirToGo * m_SoccerSettings.agentRunSpeed, ForceMode.VelocityChange);
     }
 
-<<<<<<< HEAD
 
-    public override void OnActionReceived(ActionBuffers actionBuffers)
-    {
-        if (position == Position.Goalie)
-        {
-            AddReward(m_Existential);
-        }
-        else if (position == Position.Striker)
-        {
-            AddReward(-m_Existential);
-        }
-        MoveAgent(actionBuffers.DiscreteActions);
-=======
+
    public override void OnActionReceived(ActionBuffers actionBuffers)
 {
     actionStepCounter++;
->>>>>>> rewardSystemChrys
+
 
     // Encourage meaningful movement every 5 steps
     if (actionStepCounter % 5 == 0)
@@ -166,15 +154,12 @@ public class AgentSoccer : Agent
 
         if (position == Position.Goalie) force = k_Power;
 
-<<<<<<< HEAD
-=======
         c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
 
         AddReward(1.5f); // Increased reward for touching the ball
         Debug.Log($"{name} rewarded for touching the ball.");
 
         timeSinceLastBallTouch = 0f; // Reset the no-ball-touch timer
->>>>>>> rewardSystemChrys
     }
     else if (c.gameObject.CompareTag("blueAgent") || c.gameObject.CompareTag("purpleAgent"))
     {
@@ -210,7 +195,7 @@ public class AgentSoccer : Agent
         float dotProduct = Vector3.Dot(agentDirection, toTarget);
         return dotProduct > 0.5f; // Slightly stricter alignment requirement
     }
-<<<<<<< HEAD
+ 
 
     void OnTriggerEnter(Collider other)
     {
@@ -236,6 +221,5 @@ public class AgentSoccer : Agent
         }
     }
 
-=======
->>>>>>> rewardSystemChrys
+
 }
