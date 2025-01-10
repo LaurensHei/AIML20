@@ -102,6 +102,7 @@ public class AgentSoccer : Agent
         agentRb.AddForce(dirToGo * m_SoccerSettings.agentRunSpeed, ForceMode.VelocityChange);
     }
 
+
    public override void OnActionReceived(ActionBuffers actionBuffers)
 {
     actionStepCounter++;
@@ -136,6 +137,7 @@ public class AgentSoccer : Agent
             AddReward(0.2f); // Small reward for progress toward the ball
             Debug.Log($"{name} rewarded for moving toward the ball.");
         }
+
     }
 
     MoveAgent(actionBuffers.DiscreteActions);
@@ -156,6 +158,7 @@ public class AgentSoccer : Agent
         Debug.Log($"{name} rewarded for touching the ball.");
 
         timeSinceLastBallTouch = 0f; // Reset the no-ball-touch timer
+
     }
     else if (c.gameObject.CompareTag("blueAgent") || c.gameObject.CompareTag("purpleAgent"))
     {
@@ -191,4 +194,30 @@ public class AgentSoccer : Agent
         float dotProduct = Vector3.Dot(agentDirection, toTarget);
         return dotProduct > 0.5f; // Slightly stricter alignment requirement
     }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        SoundObject soundObj = other.gameObject.GetComponent<SoundObject>();
+        GameObject soundGameObject = soundObj.gameObject;
+        if (soundObj != null)
+        {
+            if (soundObj.soundType == "BallCollision")
+            {
+                Debug.LogWarning($"{gameObject.name} heard a ball collision from {soundObj.originName}");
+
+                if (ballTransform != null)
+                {
+                    Vector3 directionToBall = (ballTransform.position - transform.position).normalized;
+                    agentRb.AddForce(directionToBall * 10f, ForceMode.VelocityChange);
+
+                }
+            } 
+            else
+            {
+                Debug.LogWarning($"{gameObject.name} heard a regular collision");
+            }
+        }
+    }
+
 }

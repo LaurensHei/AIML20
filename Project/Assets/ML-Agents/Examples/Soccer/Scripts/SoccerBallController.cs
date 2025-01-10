@@ -18,18 +18,23 @@ public class SoccerBallController : MonoBehaviour
         {
             Debug.LogError("SoccerEnvController not found on the area object.");
         }
+
     }
 
     void OnCollisionEnter(Collision col)
     {
         if (col.gameObject.CompareTag(purpleAgentTag))
         {
+
             Debug.Log("Ball touched by Purple Agent");
+
             envController.purplePlayerTouched(Team.Purple);
         }
         else if (col.gameObject.CompareTag(blueAgentTag))
         {
+
             Debug.Log("Ball touched by Blue Agent");
+
             envController.bluePlayerTouched(Team.Blue);
         }
         else if (col.gameObject.CompareTag(blueGoalTag))

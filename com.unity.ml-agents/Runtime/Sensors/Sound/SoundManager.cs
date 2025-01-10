@@ -13,11 +13,21 @@ public class SoundManager : MonoBehaviour
     }
 
     // Method to create a new sound at a given position
-    public void CreateSound(Vector3 position, string obj1, string obj2)
+    public void CreateSound(Vector3 position, string obj1, string obj2, string collisionType)
     {
         // Instantiate a new sound sphere at the given position
 
         GameObject newSound = Instantiate(soundSpherePrefab, position, Quaternion.identity);
+
+        SoundObject soundObj = newSound.GetComponent<SoundObject>();
+        if (soundObj == null) 
+        {
+            soundObj = newSound.AddComponent<SoundObject>();
+        }
+
+        soundObj.originName = obj1;
+        soundObj.endName = obj2;
+        soundObj.soundType = collisionType;
 
         // Optionally, set additional properties on the sound sphere (e.g., a unique name, etc.)
         newSound.name = "SoundSphere_" + obj1 + " " + obj2 + "_"; // Unique name based on objects

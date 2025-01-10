@@ -147,6 +147,7 @@ public class SoccerEnvController : MonoBehaviour
             Debug.Log("Purple team stole the ball. Reward given.");
             lastTeamBall = "purple";
         }
+
         else if (lastTeamBall == "purple")
         {
             purpleTeamScore += Mathf.RoundToInt(0.5f);
@@ -155,6 +156,7 @@ public class SoccerEnvController : MonoBehaviour
         }
         else
         {
+
             lastTeamBall = "purple";
             Debug.Log("Purple team first touch.");
         }
@@ -170,6 +172,7 @@ public class SoccerEnvController : MonoBehaviour
             Debug.Log("Blue team stole the ball. Reward given.");
             lastTeamBall = "blue";
         }
+
         else if (lastTeamBall == "blue")
         {
             blueTeamScore += Mathf.RoundToInt(0.5f);
@@ -178,6 +181,7 @@ public class SoccerEnvController : MonoBehaviour
         }
         else
         {
+
             lastTeamBall = "blue";
             Debug.Log("Blue team first touch.");
         }
