@@ -65,7 +65,7 @@ public class AgentSoccer : Agent
         m_LateralSpeed = position == Position.Goalie ? 1.0f : 0.3f;
         m_ForwardSpeed = position == Position.Striker ? 1.3f : 1.0f;
 
-        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
+        m_SoccerSettings = Object.FindFirstObjectByType<SoccerSettings>();
         agentRb = GetComponent<Rigidbody>();
         agentRb.maxAngularVelocity = 500;
 
