@@ -45,7 +45,7 @@ public class SoccerEnvController : MonoBehaviour
 
     void Start()
     {
-        m_SoccerSettings = FindObjectOfType<SoccerSettings>();
+        m_SoccerSettings = Object.FindFirstObjectByType<SoccerSettings>();
         m_BlueAgentGroup = new SimpleMultiAgentGroup();
         m_PurpleAgentGroup = new SimpleMultiAgentGroup();
         ballRb = ball.GetComponent<Rigidbody>();
