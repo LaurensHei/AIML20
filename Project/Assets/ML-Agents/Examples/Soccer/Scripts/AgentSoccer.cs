@@ -39,51 +39,27 @@ public class AgentSoccer : Agent
     public float rotSign;
 
     EnvironmentParameters m_ResetParams;
-    private Unity.MLAgents.Sensors.SoundSensorComponent soundSensorComponent;
-
+    private SoundSensorComponent soundSensorComponent;
 
     Transform ballTransform;
+
+    private float timeSinceLastBallTouch = 0f; // Tracks time since last ball interaction
+    private Vector3 lastPosition; // Tracks meaningful movement
+    private int actionStepCounter = 0; // Counter for periodic checks
+
     public override void Initialize()
     {
         SoccerEnvController envController = GetComponentInParent<SoccerEnvController>();
-        if (envController != null)
-        {
-            m_Existential = 1f / envController.MaxEnvironmentSteps;
-        }
-        else
-        {
-            m_Existential = 1f / MaxStep;
-        }
+        m_Existential = envController != null ? 1f / envController.MaxEnvironmentSteps : 1f / MaxStep;
 
-        m_BehaviorParameters = gameObject.GetComponent<BehaviorParameters>();
-        if (m_BehaviorParameters.TeamId == (int)Team.Blue)
-        {
-            team = Team.Blue;
-            initialPos = new Vector3(transform.position.x - 5f, .5f, transform.position.z);
-            rotSign = 1f;
-        }
-        else
-        {
-            team = Team.Purple;
-            initialPos = new Vector3(transform.position.x + 5f, .5f, transform.position.z);
-            rotSign = -1f;
-        }
+        m_BehaviorParameters = GetComponent<BehaviorParameters>();
+        team = m_BehaviorParameters.TeamId == (int)Team.Blue ? Team.Blue : Team.Purple;
+        initialPos = transform.position + (team == Team.Blue ? new Vector3(-5f, 0.5f, 0) : new Vector3(5f, 0.5f, 0));
+        rotSign = team == Team.Blue ? 1f : -1f;
 
-        if (position == Position.Goalie)
-        {
-            m_LateralSpeed = 1.0f;
-            m_ForwardSpeed = 1.0f;
-        }
-        else if (position == Position.Striker)
-        {
-            m_LateralSpeed = 0.3f;
-            m_ForwardSpeed = 1.3f;
-        }
-        else
-        {
-            m_LateralSpeed = 0.3f;
-            m_ForwardSpeed = 1.0f;
-        }
+        position = Position.Generic; // Default position, adjust as necessary
+        m_LateralSpeed = position == Position.Goalie ? 1.0f : 0.3f;
+        m_ForwardSpeed = position == Position.Striker ? 1.3f : 1.0f;
 
         m_SoccerSettings = FindObjectOfType<SoccerSettings>();
         agentRb = GetComponent<Rigidbody>();
@@ -91,24 +67,15 @@ public class AgentSoccer : Agent
 
         m_ResetParams = Academy.Instance.EnvironmentParameters;
 
-        // Dynamically add or retrieve SoundSensorComponent
-        soundSensorComponent = gameObject.GetComponent<SoundSensorComponent>();
-        if (soundSensorComponent == null)
-        {
-            soundSensorComponent = gameObject.AddComponent<SoundSensorComponent>();
-            Debug.Log("___Sensor component initilized____");
-        }
+        soundSensorComponent = GetComponent<SoundSensorComponent>() ?? gameObject.AddComponent<SoundSensorComponent>();
 
         ballTransform = GameObject.FindWithTag("ball").transform;
         if (ballTransform == null)
         {
             Debug.LogError("Ball object not found in the scene!");
         }
-    }
 
-    IList<float> Vector4ToIList(Vector4 vector)
-    {
-        return new List<float> { vector.x, vector.y, vector.z, vector.w }; // Use lowercase 'x', 'y', 'z', 'w'
+        lastPosition = transform.position;
     }
 
     public void MoveAgent(ActionSegment<int> act)
@@ -122,41 +89,20 @@ public class AgentSoccer : Agent
         var rightAxis = act[1];
         var rotateAxis = act[2];
 
-        switch (forwardAxis)
-        {
-            case 1:
-                dirToGo = transform.forward * m_ForwardSpeed;
-                m_KickPower = 1f;
-                break;
-            case 2:
-                dirToGo = transform.forward * -m_ForwardSpeed;
-                break;
-        }
+        if (forwardAxis == 1) dirToGo = transform.forward * m_ForwardSpeed;
+        else if (forwardAxis == 2) dirToGo = transform.forward * -m_ForwardSpeed;
 
-        switch (rightAxis)
-        {
-            case 1:
-                dirToGo = transform.right * m_LateralSpeed;
-                break;
-            case 2:
-                dirToGo = transform.right * -m_LateralSpeed;
-                break;
-        }
+        if (rightAxis == 1) dirToGo += transform.right * m_LateralSpeed;
+        else if (rightAxis == 2) dirToGo += transform.right * -m_LateralSpeed;
 
-        switch (rotateAxis)
-        {
-            case 1:
-                rotateDir = transform.up * -1f;
-                break;
-            case 2:
-                rotateDir = transform.up * 1f;
-                break;
-        }
+        if (rotateAxis == 1) rotateDir = transform.up * -1f;
+        else if (rotateAxis == 2) rotateDir = transform.up * 1f;
 
         transform.Rotate(rotateDir, Time.deltaTime * 100f);
         agentRb.AddForce(dirToGo * m_SoccerSettings.agentRunSpeed, ForceMode.VelocityChange);
     }
 
+<<<<<<< HEAD
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
@@ -169,54 +115,92 @@ public class AgentSoccer : Agent
             AddReward(-m_Existential);
         }
         MoveAgent(actionBuffers.DiscreteActions);
+=======
+   public override void OnActionReceived(ActionBuffers actionBuffers)
+{
+    actionStepCounter++;
+>>>>>>> rewardSystemChrys
 
-        if (soundSensorComponent != null && soundSensorComponent.IsHearingSound())
+    // Encourage meaningful movement every 5 steps
+    if (actionStepCounter % 5 == 0)
+    {
+        float distanceMoved = (transform.position - lastPosition).magnitude;
+
+        if (distanceMoved < 0.2f) // Barely moved since the last check
         {
-            if (IsMovingToward(ballTransform.position)) // Assuming ballTransform is set up
-            {
-                AddReward(1f); // Reward for moving toward the ball
-            }
+            AddReward(-0.1f); // Reduced penalty for ineffective movement
+            Debug.Log($"{name} penalized for lack of meaningful movement.");
+        }
+
+        lastPosition = transform.position;
+    }
+
+    // Gradual penalty for inactivity
+    timeSinceLastBallTouch += Time.fixedDeltaTime;
+    if (timeSinceLastBallTouch > 5.0f) // No interaction for 5 seconds
+    {
+        AddReward(-0.05f); // Smaller penalty for not touching the ball
+        Debug.Log($"{name} penalized for not interacting with the ball.");
+    }
+
+    // Encourage moving toward the ball
+    if (soundSensorComponent != null && soundSensorComponent.IsHearingSound())
+    {
+        if (IsMovingToward(ballTransform.position))
+        {
+            AddReward(0.2f); // Small reward for progress toward the ball
+            Debug.Log($"{name} rewarded for moving toward the ball.");
         }
 
     }
 
-    public override void Heuristic(in ActionBuffers actionsOut)
+    MoveAgent(actionBuffers.DiscreteActions);
+}
+   void OnCollisionEnter(Collision c)
+{
+    if (c.gameObject.CompareTag("ball"))
     {
-        var discreteActionsOut = actionsOut.DiscreteActions;
-        if (Input.GetKey(KeyCode.W)) discreteActionsOut[0] = 1;
-        if (Input.GetKey(KeyCode.S)) discreteActionsOut[0] = 2;
-        if (Input.GetKey(KeyCode.A)) discreteActionsOut[2] = 1;
-        if (Input.GetKey(KeyCode.D)) discreteActionsOut[2] = 2;
-        if (Input.GetKey(KeyCode.E)) discreteActionsOut[1] = 1;
-        if (Input.GetKey(KeyCode.Q)) discreteActionsOut[1] = 2;
-    }
-
-    void OnCollisionEnter(Collision c)
-    {
-        
         var force = k_Power * m_KickPower;
-        if (position == Position.Goalie) force = k_Power;
-        if (c.gameObject.CompareTag("ball"))
-        {
-            AddReward(.2f * m_BallTouch);
-            var dir = c.contacts[0].point - transform.position;
-            dir = dir.normalized;
-            c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
-        }
+        var dir = c.contacts[0].point - transform.position;
+        dir = dir.normalized;
 
+        if (position == Position.Goalie) force = k_Power;
+
+<<<<<<< HEAD
+=======
+        c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
+
+        AddReward(1.5f); // Increased reward for touching the ball
+        Debug.Log($"{name} rewarded for touching the ball.");
+
+        timeSinceLastBallTouch = 0f; // Reset the no-ball-touch timer
+>>>>>>> rewardSystemChrys
     }
+    else if (c.gameObject.CompareTag("blueAgent") || c.gameObject.CompareTag("purpleAgent"))
+    {
+        AgentSoccer otherAgent = c.gameObject.GetComponent<AgentSoccer>();
+        if (otherAgent != null && otherAgent.team == this.team)
+        {
+            AddReward(0.5f); // Reward for teamwork
+        }
+        else if (otherAgent != null && otherAgent.team != this.team)
+        {
+            AddReward(-1.0f); // Increased penalty for passing to opponents
+        }
+    }
+    else if (c.gameObject.CompareTag("wall"))
+    {
+        AddReward(-0.1f); // Reduced penalty for wall collisions to avoid excessive discouragement
+        Debug.Log($"{name} penalized for colliding with the wall.");
+    }
+}
+
 
     public override void OnEpisodeBegin()
     {
         m_BallTouch = m_ResetParams.GetWithDefault("ball_touch", 0);
-
-        if (soundSensorComponent != null)
-        {
-            var soundSensor = soundSensorComponent.GetSensor();
-            soundSensor?.Reset(); // Reset the sensor if it exists
-        }
+        soundSensorComponent?.GetSensor()?.Reset();
     }
-
 
     bool IsMovingToward(Vector3 targetPosition)
     {
@@ -224,8 +208,9 @@ public class AgentSoccer : Agent
         Vector3 agentDirection = agentRb.velocity.normalized;
 
         float dotProduct = Vector3.Dot(agentDirection, toTarget);
-        return dotProduct > 0.4f; // Adjust threshold for alignment as needed
+        return dotProduct > 0.5f; // Slightly stricter alignment requirement
     }
+<<<<<<< HEAD
 
     void OnTriggerEnter(Collider other)
     {
@@ -251,4 +236,6 @@ public class AgentSoccer : Agent
         }
     }
 
+=======
+>>>>>>> rewardSystemChrys
 }

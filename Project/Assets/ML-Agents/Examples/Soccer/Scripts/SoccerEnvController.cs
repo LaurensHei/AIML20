@@ -2,8 +2,7 @@ using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
-using System.IO; 
+using System.IO;
 
 public class SoccerEnvController : MonoBehaviour
 {
@@ -19,100 +18,63 @@ public class SoccerEnvController : MonoBehaviour
         public Rigidbody Rb;
     }
 
-
-    /// <summary>
-    /// Max Academy steps before this platform resets
-    /// </summary>
-    /// <returns></returns>
-    [Tooltip("Max Environment Steps")] public int MaxEnvironmentSteps = 25000;
-
-    /// <summary>
-    /// The area bounds.
-    /// </summary>
-
-    /// <summary>
-    /// We will be changing the ground material based on success/failue
-    /// </summary>
+    [Tooltip("Max Environment Steps")]
+    public int MaxEnvironmentSteps = 25000;
 
     public GameObject ball;
     [HideInInspector]
     public Rigidbody ballRb;
     Vector3 m_BallStartingPos;
 
-    //List of Agents On Platform
     public List<PlayerInfo> AgentsList = new List<PlayerInfo>();
 
     private SoccerSettings m_SoccerSettings;
-
-
     private SimpleMultiAgentGroup m_BlueAgentGroup;
     private SimpleMultiAgentGroup m_PurpleAgentGroup;
-
     private int m_ResetTimer;
 
-    public int blueTeamScore = 0; // performance count blue team
-    public int purpleTeamScore = 0; // performance count purple team
+    public int blueTeamScore = 0;
+    public int purpleTeamScore = 0;
     public string lastTeamBall;
 
     public TMP_Text scoreText;
     private float timeLastWrite = 0f;
     public float writeInterval = 10f;
 
-    private string directoryPath;
     private string filePath = "Assets/ML-Agents/Examples/Soccer/Prefabs/scores.txt";
 
     void Start()
     {
-
-
         m_SoccerSettings = FindObjectOfType<SoccerSettings>();
-        // Initialize TeamManager
         m_BlueAgentGroup = new SimpleMultiAgentGroup();
         m_PurpleAgentGroup = new SimpleMultiAgentGroup();
         ballRb = ball.GetComponent<Rigidbody>();
-        m_BallStartingPos = new Vector3(ball.transform.position.x, ball.transform.position.y, ball.transform.position.z);
+        m_BallStartingPos = ball.transform.position;
+
         foreach (var item in AgentsList)
         {
             item.StartingPos = item.Agent.transform.position;
             item.StartingRot = item.Agent.transform.rotation;
             item.Rb = item.Agent.GetComponent<Rigidbody>();
+
             if (item.Agent.team == Team.Blue)
-            {
                 m_BlueAgentGroup.RegisterAgent(item.Agent);
-            }
             else
-            {
                 m_PurpleAgentGroup.RegisterAgent(item.Agent);
-            }
-        }
-        scoreText.text = "Blue team: 0 - Purple team: 0";
-
-        string directoryPath = Path.GetDirectoryName(filePath);
-
-        if (!Directory.Exists(directoryPath))
-        {
-            Directory.CreateDirectory(directoryPath);
-            Debug.Log($"Directory created at {directoryPath}");
         }
 
-        try
-        {
-            if (File.Exists(filePath))
-            {
-                File.WriteAllText(filePath, "");
-            }
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"Failed to clear the scores file: {ex.Message}");
-        }
+        scoreText.text = "Blue Team: 0 - Purple Team: 0";
+
+        if (File.Exists(filePath))
+            File.WriteAllText(filePath, "");
+
         ResetScene();
     }
 
     void FixedUpdate()
     {
         m_ResetTimer += 1;
-        timeLastWrite += Time.fixedDeltaTime; 
+        timeLastWrite += Time.fixedDeltaTime;
 
         if (m_ResetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
         {
@@ -120,14 +82,13 @@ public class SoccerEnvController : MonoBehaviour
             m_PurpleAgentGroup.GroupEpisodeInterrupted();
             ResetScene();
         }
-        // Check if it's time ot write the scores to the file.
+
         if (timeLastWrite >= writeInterval)
         {
-            WriteScoresTofile();
-            timeLastWrite = 0f; // Reset timer
+            WriteScoresToFile();
+            timeLastWrite = 0f;
         }
     }
-
 
     public void ResetBall()
     {
@@ -137,67 +98,103 @@ public class SoccerEnvController : MonoBehaviour
         ball.transform.position = m_BallStartingPos + new Vector3(randomPosX, 0f, randomPosZ);
         ballRb.velocity = Vector3.zero;
         ballRb.angularVelocity = Vector3.zero;
-
     }
 
-    public void GoalTouched(Team scoredTeam)
+   public void GoalTouched(GameObject goal)
+{
+    if (goal.CompareTag("blueGoal"))
     {
-        if (scoredTeam == Team.Blue)
+        if (lastTeamBall == "purple") // Purple scores in Blue's goal
         {
-            m_BlueAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
-            m_PurpleAgentGroup.AddGroupReward(-1);
-            blueTeamScore += 3;
-        }
-        if (scoredTeam == Team.Purple)
-        {
-            m_PurpleAgentGroup.AddGroupReward(1 - (float)m_ResetTimer / MaxEnvironmentSteps);
-            m_BlueAgentGroup.AddGroupReward(-1);
+            m_PurpleAgentGroup.AddGroupReward(2.0f); // Increased reward for scoring
+            m_BlueAgentGroup.AddGroupReward(-1.5f); // Penalty for conceding
             purpleTeamScore += 3;
         }
-        m_PurpleAgentGroup.EndGroupEpisode();
-        m_BlueAgentGroup.EndGroupEpisode();
-        ResetScene();
-
+        else if (lastTeamBall == "blue") // Blue scores in their own goal
+        {
+            m_BlueAgentGroup.AddGroupReward(-2.0f); // Heavier penalty for scoring in own goal
+            m_PurpleAgentGroup.AddGroupReward(1.0f); // Reward for opposition
+        }
     }
+    else if (goal.CompareTag("purpleGoal"))
+    {
+        if (lastTeamBall == "blue") // Blue scores in Purple's goal
+        {
+            m_BlueAgentGroup.AddGroupReward(2.0f);
+            m_PurpleAgentGroup.AddGroupReward(-1.5f);
+            blueTeamScore += 3;
+        }
+        else if (lastTeamBall == "purple") // Purple scores in their own goal
+        {
+            m_PurpleAgentGroup.AddGroupReward(-2.0f);
+            m_BlueAgentGroup.AddGroupReward(1.0f);
+        }
+    }
+
+    m_PurpleAgentGroup.EndGroupEpisode();
+    m_BlueAgentGroup.EndGroupEpisode();
+    ResetScene();
+}
+
 
     public void purplePlayerTouched(Team teamAtBall)
     {
-        if (lastTeamBall == "purple")
+        if (lastTeamBall == "blue")
         {
-            purpleTeamScore += 1;
-        }
-        if (lastTeamBall == "blue") 
-        {
-            blueTeamScore -=0;
+            purpleTeamScore += Mathf.RoundToInt(1.0f);
+            m_PurpleAgentGroup.AddGroupReward(0.5f);
+            m_BlueAgentGroup.AddGroupReward(-0.5f);
+            Debug.Log("Purple team stole the ball. Reward given.");
             lastTeamBall = "purple";
         }
+<<<<<<< HEAD
         else {
+=======
+        else if (lastTeamBall == "purple")
+        {
+            purpleTeamScore += Mathf.RoundToInt(0.5f);
+            m_PurpleAgentGroup.AddGroupReward(0.2f);
+            Debug.Log("Purple team successful pass. Partial reward given.");
+        }
+        else
+        {
+>>>>>>> rewardSystemChrys
             lastTeamBall = "purple";
+            Debug.Log("Purple team first touch.");
         }
     }
 
     public void bluePlayerTouched(Team teamAtBall)
     {
-        if (lastTeamBall == "blue")
-        {
-            blueTeamScore += 1;
-        }
         if (lastTeamBall == "purple")
         {
-            purpleTeamScore -= 0;
+            blueTeamScore += Mathf.RoundToInt(1.0f);
+            m_BlueAgentGroup.AddGroupReward(0.5f);
+            m_PurpleAgentGroup.AddGroupReward(-0.5f);
+            Debug.Log("Blue team stole the ball. Reward given.");
             lastTeamBall = "blue";
         }
+<<<<<<< HEAD
         else {
+=======
+        else if (lastTeamBall == "blue")
+        {
+            blueTeamScore += Mathf.RoundToInt(0.5f);
+            m_BlueAgentGroup.AddGroupReward(0.2f);
+            Debug.Log("Blue team successful pass. Partial reward given.");
+        }
+        else
+        {
+>>>>>>> rewardSystemChrys
             lastTeamBall = "blue";
+            Debug.Log("Blue team first touch.");
         }
     }
-
 
     public void ResetScene()
     {
         m_ResetTimer = 0;
 
-        //Reset Agents
         foreach (var item in AgentsList)
         {
             var randomPosX = Random.Range(-5f, 5f);
@@ -210,13 +207,11 @@ public class SoccerEnvController : MonoBehaviour
             item.Rb.angularVelocity = Vector3.zero;
         }
 
-        //Reset Ball
         ResetBall();
         DisplayScores();
     }
 
-
-    public void DisplayScores() 
+    public void DisplayScores()
     {
         if (scoreText != null)
         {
@@ -226,21 +221,20 @@ public class SoccerEnvController : MonoBehaviour
         {
             Debug.LogWarning("scoreText is null");
         }
-        
     }
 
-    private void WriteScoresTofile()
+    private void WriteScoresToFile()
     {
-        string content = $"Time: {Time.time:F2}, Blue Team Score: {blueTeamScore}, Purple Team Score {purpleTeamScore}\n";
+        string content = $"Time: {Time.time:F2}, Blue Team Score: {blueTeamScore}, Purple Team Score: {purpleTeamScore}\n";
 
         try
-        {   
+        {
             File.AppendAllText(filePath, content);
             Debug.Log($"Scores written to {filePath}");
-        } catch (System.Exception ex) 
+        }
+        catch (System.Exception ex)
         {
             Debug.LogError($"Failed to write scores to the file: {ex.Message}");
         }
     }
-
 }
