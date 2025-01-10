@@ -172,7 +172,6 @@ public class SoccerEnvController : MonoBehaviour
             lastTeamBall = "purple";
         }
         else {
-            Debug.LogWarning("no team at ball");
             lastTeamBall = "purple";
         }
     }
@@ -189,7 +188,6 @@ public class SoccerEnvController : MonoBehaviour
             lastTeamBall = "blue";
         }
         else {
-            Debug.LogWarning("no team at ball");
             lastTeamBall = "blue";
         }
     }

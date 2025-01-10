@@ -157,6 +157,7 @@ public class AgentSoccer : Agent
         agentRb.AddForce(dirToGo * m_SoccerSettings.agentRunSpeed, ForceMode.VelocityChange);
     }
 
+
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         if (position == Position.Goalie)
@@ -176,6 +177,7 @@ public class AgentSoccer : Agent
                 AddReward(1f); // Reward for moving toward the ball
             }
         }
+
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)
@@ -202,8 +204,6 @@ public class AgentSoccer : Agent
             c.gameObject.GetComponent<Rigidbody>().AddForce(dir * force);
         }
 
-
-
     }
 
     public override void OnEpisodeBegin()
@@ -225,6 +225,30 @@ public class AgentSoccer : Agent
 
         float dotProduct = Vector3.Dot(agentDirection, toTarget);
         return dotProduct > 0.4f; // Adjust threshold for alignment as needed
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        SoundObject soundObj = other.gameObject.GetComponent<SoundObject>();
+        GameObject soundGameObject = soundObj.gameObject;
+        if (soundObj != null)
+        {
+            if (soundObj.soundType == "BallCollision")
+            {
+                Debug.LogWarning($"{gameObject.name} heard a ball collision from {soundObj.originName}");
+
+                if (ballTransform != null)
+                {
+                    Vector3 directionToBall = (ballTransform.position - transform.position).normalized;
+                    agentRb.AddForce(directionToBall * 10f, ForceMode.VelocityChange);
+
+                }
+            } 
+            else
+            {
+                Debug.LogWarning($"{gameObject.name} heard a regular collision");
+            }
+        }
     }
 
 }

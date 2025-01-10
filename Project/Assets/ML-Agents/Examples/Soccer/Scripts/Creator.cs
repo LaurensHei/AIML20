@@ -50,14 +50,25 @@ public class Creator : MonoBehaviour
         }
     }
 
-  public void CreateSound(Vector3 position, string fromName, string toName)
+  public void CreateSound(Vector3 position, string fromName, string toName, string soundType)
 {
     if (soundCreater != null)
     {
         // Instantiate a new sound object at the given position
         GameObject newSound = Instantiate(soundCreater, position, Quaternion.identity);
         newSound.transform.localScale = Vector3.one;
-        newSound.name = "sound " + fromName + " " + toName;
+        newSound.name = $"sound_{fromName}_{toName}";
+
+        SoundObject soundObj = newSound.GetComponent<SoundObject>();
+        if (soundObj == null) 
+        {
+            soundObj = newSound.AddComponent<SoundObject>();
+        }
+
+        soundObj.originName = fromName;
+        soundObj.endName = toName;
+        soundObj.soundType = soundType;
+        
 
         // Ensure the Collider exists and set it to be a Trigger
         Collider collider = newSound.GetComponent<Collider>();
@@ -101,10 +112,16 @@ public class Creator : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision detected");
+        Debug.LogWarning("Collision detected");
+        GameObject firstObj = collision.gameObject;
+        GameObject secObj = gameObject;
+
+        bool isBallCollision = secObj.CompareTag("Ball") || firstObj.CompareTag("Ball");
+        string collisionType = isBallCollision ? "BallCollision" : "GenericCollision";
 
         // Call the method to create a sound at the collision point
-        GetComponent<Creator>().CreateSound(collision.contacts[0].point,collision.gameObject.name,gameObject.name);
+        Vector3 soundPosition = collision.contacts[0].point;
+        CreateSound(soundPosition, firstObj.name, secObj.name, collisionType);
     }
 
 

@@ -1,0 +1,4 @@
+Time: 9.98, Blue Team Score: 4, Purple Team Score 7
+Time: 19.98, Blue Team Score: 15, Purple Team Score 13
+Time: 29.98, Blue Team Score: 19, Purple Team Score 26
+Time: 39.98, Blue Team Score: 19, Purple Team Score 33
