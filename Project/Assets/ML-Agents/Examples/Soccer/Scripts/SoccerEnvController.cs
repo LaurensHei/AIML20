@@ -51,6 +51,7 @@ public class SoccerEnvController : MonoBehaviour
         ballRb = ball.GetComponent<Rigidbody>();
         m_BallStartingPos = ball.transform.position;
 
+        // Register agents in the appropriate groups
         foreach (var item in AgentsList)
         {
             item.StartingPos = item.Agent.transform.position;
@@ -76,6 +77,7 @@ public class SoccerEnvController : MonoBehaviour
         m_ResetTimer += 1;
         timeLastWrite += Time.fixedDeltaTime;
 
+        // Environment reset if max steps are reached
         if (m_ResetTimer >= MaxEnvironmentSteps && MaxEnvironmentSteps > 0)
         {
             m_BlueAgentGroup.GroupEpisodeInterrupted();
@@ -83,6 +85,7 @@ public class SoccerEnvController : MonoBehaviour
             ResetScene();
         }
 
+        // Periodically write scores to file
         if (timeLastWrite >= writeInterval)
         {
             WriteScoresToFile();
@@ -100,63 +103,61 @@ public class SoccerEnvController : MonoBehaviour
         ballRb.angularVelocity = Vector3.zero;
     }
 
-   public void GoalTouched(GameObject goal)
-{
-    if (goal.CompareTag("blueGoal"))
+    public void GoalTouched(GameObject goal)
     {
-        if (lastTeamBall == "purple") // Purple scores in Blue's goal
+        // Team-level (group) rewards for scoring/conceding
+        if (goal.CompareTag("blueGoal"))
         {
-            m_PurpleAgentGroup.AddGroupReward(2.0f); // Increased reward for scoring
-            m_BlueAgentGroup.AddGroupReward(-1.5f); // Penalty for conceding
-            purpleTeamScore = Mathf.Min(purpleTeamScore + 1f, 20f);
+            if (lastTeamBall == "purple") // Purple scores in Blue's goal
+            {
+                m_PurpleAgentGroup.AddGroupReward(2.0f);
+                m_BlueAgentGroup.AddGroupReward(-1.5f);
+                purpleTeamScore = Mathf.Min(purpleTeamScore + 1f, 20f);
+            }
+            else if (lastTeamBall == "blue") // Blue scores in own goal
+            {
+                m_BlueAgentGroup.AddGroupReward(-2.0f);
+                m_PurpleAgentGroup.AddGroupReward(1.0f);
+            }
         }
-        else if (lastTeamBall == "blue") // Blue scores in their own goal
+        else if (goal.CompareTag("purpleGoal"))
         {
-            m_BlueAgentGroup.AddGroupReward(-2.0f); // Heavier penalty for scoring in own goal
-            m_PurpleAgentGroup.AddGroupReward(1.0f); // Reward for opposition
+            if (lastTeamBall == "blue") // Blue scores in Purple's goal
+            {
+                m_BlueAgentGroup.AddGroupReward(2.0f);
+                m_PurpleAgentGroup.AddGroupReward(-1.5f);
+                blueTeamScore = Mathf.Min(blueTeamScore + 1f, 20f);
+            }
+            else if (lastTeamBall == "purple") // Purple scores in own goal
+            {
+                m_PurpleAgentGroup.AddGroupReward(-2.0f);
+                m_BlueAgentGroup.AddGroupReward(1.0f);
+            }
         }
-    }
-    else if (goal.CompareTag("purpleGoal"))
-    {
-        if (lastTeamBall == "blue") // Blue scores in Purple's goal
-        {
-            m_BlueAgentGroup.AddGroupReward(2.0f);
-            m_PurpleAgentGroup.AddGroupReward(-1.5f);
-            blueTeamScore = Mathf.Min(blueTeamScore + 1f, 20f); // Maximum of 40 points
-        }
-        else if (lastTeamBall == "purple") // Purple scores in their own goal
-        {
-            m_PurpleAgentGroup.AddGroupReward(-2.0f);
-            m_BlueAgentGroup.AddGroupReward(1.0f);
-        }
-    }
 
-    m_PurpleAgentGroup.EndGroupEpisode();
-    m_BlueAgentGroup.EndGroupEpisode();
-    ResetScene();
-}
-
+        // End the group episode and reset
+        m_PurpleAgentGroup.EndGroupEpisode();
+        m_BlueAgentGroup.EndGroupEpisode();
+        ResetScene();
+    }
 
     public void purplePlayerTouched(Team teamAtBall)
     {
+        // Team-level logic (steals/passes) => group reward
         if (lastTeamBall == "blue")
         {
-            // purpleTeamScore = Mathf.Min(purpleTeamScore + 0.1f, 20f);
             m_PurpleAgentGroup.AddGroupReward(0.5f);
             m_BlueAgentGroup.AddGroupReward(-0.5f);
             Debug.Log("Purple team stole the ball. Reward given.");
             lastTeamBall = "purple";
         }
-
         else if (lastTeamBall == "purple")
         {
-            // purpleTeamScore = Mathf.Min(purpleTeamScore + 0.05f, 20f);
             m_PurpleAgentGroup.AddGroupReward(0.2f);
             Debug.Log("Purple team successful pass. Partial reward given.");
         }
         else
         {
-
             lastTeamBall = "purple";
             Debug.Log("Purple team first touch.");
         }
@@ -164,24 +165,21 @@ public class SoccerEnvController : MonoBehaviour
 
     public void bluePlayerTouched(Team teamAtBall)
     {
+        // Team-level logic (steals/passes) => group reward
         if (lastTeamBall == "purple")
         {
-            // blueTeamScore = Mathf.Min(blueTeamScore + 0.1f, 20f);
             m_BlueAgentGroup.AddGroupReward(0.5f);
             m_PurpleAgentGroup.AddGroupReward(-0.5f);
             Debug.Log("Blue team stole the ball. Reward given.");
             lastTeamBall = "blue";
         }
-
         else if (lastTeamBall == "blue")
         {
-            // blueTeamScore = Mathf.Min(blueTeamScore + 0.05f, 20f);
             m_BlueAgentGroup.AddGroupReward(0.2f);
             Debug.Log("Blue team successful pass. Partial reward given.");
         }
         else
         {
-
             lastTeamBall = "blue";
             Debug.Log("Blue team first touch.");
         }
@@ -191,6 +189,7 @@ public class SoccerEnvController : MonoBehaviour
     {
         m_ResetTimer = 0;
 
+        // Reset each agent
         foreach (var item in AgentsList)
         {
             var randomPosX = Random.Range(-5f, 5f);
@@ -209,6 +208,7 @@ public class SoccerEnvController : MonoBehaviour
 
     public void DisplayScores()
     {
+        // If either team hits 20, reset both scores
         if (Mathf.RoundToInt(blueTeamScore) == 20 || Mathf.RoundToInt(purpleTeamScore) == 20)
         {
             blueTeamScore = 0;
@@ -226,7 +226,8 @@ public class SoccerEnvController : MonoBehaviour
 
     private void WriteScoresToFile()
     {
-        string content = $"Time: {Time.time:F2}, Blue Team Score: {Mathf.RoundToInt(blueTeamScore)}, Purple Team Score: {Mathf.RoundToInt(purpleTeamScore)}\n";
+        string content = $"Time: {Time.time:F2}, Blue Team Score: {Mathf.RoundToInt(blueTeamScore)}, " +
+                         $"Purple Team Score: {Mathf.RoundToInt(purpleTeamScore)}\n";
 
         try
         {
