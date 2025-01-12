@@ -49,7 +49,7 @@ public class AgentSoccer : Agent
 
     private bool isRespondingToBallSound = false;
     private float responseTimer = 0f;
-    [SerializeField] private float responseDur = 1000f; // in milliseconds
+    [SerializeField] private float responseDur = 1000f; 
 
     public override void Initialize()
     {

@@ -117,7 +117,7 @@ public class SoccerEnvController : MonoBehaviour
             else if (lastTeamBall == "blue") // Blue scores in own goal
             {
                 m_BlueAgentGroup.AddGroupReward(-2.0f);
-                m_PurpleAgentGroup.AddGroupReward(1.0f);
+               
             }
         }
         else if (goal.CompareTag("purpleGoal"))
@@ -131,7 +131,7 @@ public class SoccerEnvController : MonoBehaviour
             else if (lastTeamBall == "purple") // Purple scores in own goal
             {
                 m_PurpleAgentGroup.AddGroupReward(-2.0f);
-                m_BlueAgentGroup.AddGroupReward(1.0f);
+                
             }
         }
 
