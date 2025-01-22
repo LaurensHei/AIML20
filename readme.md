@@ -19,15 +19,13 @@ This project is a soccer simulation environment built with Unity ML-Agents. Agen
 
 ---
 
-<<<<<<< HEAD
 ## How to Train
 To train the agents, export the scene to an executable and run it outside of unity for best performance.
-An instruction can be found here: https://github.com/DennisSoemers/ml-agents/blob/fix-numpy-release-21-branch/docs/Learning-Environment-Executable.md
+An instruction can be found here:
+https://github.com/DennisSoemers/ml-agents/blob/fix-numpy-release-21-branch/docs/Learning-Environment-Executable.md
 
 ---
 
-=======
->>>>>>> 1dc4cb234cda94fa4705145c9cedab895d63fbae
 ## Modified Scripts  
 
 ### **AgentSoccer.cs**  
