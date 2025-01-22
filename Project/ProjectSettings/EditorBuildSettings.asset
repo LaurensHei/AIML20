@@ -4,5 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/ML-Agents/Examples/Soccer/Scenes/SoccerTemp.unity
+    guid: 43bb855a14d42214589eff97ec3bc446
   m_configObjects: {}
+  m_UseUCBPForAssetBundles: 0

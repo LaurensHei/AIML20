@@ -85,7 +85,7 @@ public class AgentSoccer : Agent
         ballTransform = GameObject.FindWithTag("ball")?.transform;
         if (ballTransform == null)
         {
-            Debug.LogError("Ball object not found in the scene!");
+            //Debug.LogError("Ball object not found in the scene!");
         }
 
         lastPosition = transform.position;
@@ -136,7 +136,7 @@ public class AgentSoccer : Agent
             if (distanceMoved < 0.2f)
             {
                 AddReward(-0.1f); 
-                Debug.Log($"{name} penalized for lack of meaningful movement.");
+                //Debug.Log($"{name} penalized for lack of meaningful movement.");
             }
             lastPosition = transform.position;
         }
@@ -146,7 +146,7 @@ public class AgentSoccer : Agent
         if (timeSinceLastBallTouch > 5000f)
         {
             AddReward(-0.05f);
-            Debug.Log($"{name} penalized for not interacting with the ball.");
+            //Debug.Log($"{name} penalized for not interacting with the ball.");
         }
 
         // If we “hear” the ball (sound sensor) and are moving toward it, reward slightly
@@ -155,7 +155,7 @@ public class AgentSoccer : Agent
             if (IsMovingToward(ballTransform.position))
             {
                 AddReward(0.2f);
-                Debug.Log($"{name} rewarded for moving toward the ball.");
+                //Debug.Log($"{name} rewarded for moving toward the ball.");
             }
         }
 
@@ -201,7 +201,7 @@ public class AgentSoccer : Agent
 
             // Individual reward for ball contact
             AddReward(1.5f);
-            Debug.Log($"{name} rewarded for touching the ball.");
+            //Debug.Log($"{name} rewarded for touching the ball.");
 
             timeSinceLastBallTouch = 0f;
         }
@@ -222,7 +222,7 @@ public class AgentSoccer : Agent
         else if (c.gameObject.CompareTag("wall"))
         {
             AddReward(-0.1f);
-            Debug.Log($"{name} penalized for colliding with the wall.");
+            //Debug.Log($"{name} penalized for colliding with the wall.");
         }
     }
 
@@ -253,13 +253,13 @@ public class AgentSoccer : Agent
         {
             if (soundObj.soundType == "BallCollision")
             {
-                Debug.LogWarning($"{gameObject.name} heard a ball collision from {soundObj.originName}");
+                //Debug.LogWarning($"{gameObject.name} heard a ball collision from {soundObj.originName}");
                 isRespondingToBallSound = true;
                 responseTimer = responseDur;
             }
             else
             {
-                Debug.LogWarning($"{gameObject.name} heard a regular collision");
+                //Debug.LogWarning($"{gameObject.name} heard a regular collision");
             }
         }
     }
