@@ -148,18 +148,18 @@ public class SoccerEnvController : MonoBehaviour
         {
             m_PurpleAgentGroup.AddGroupReward(0.5f);
             m_BlueAgentGroup.AddGroupReward(-0.5f);
-            Debug.Log("Purple team stole the ball. Reward given.");
+            //Debug.Log("Purple team stole the ball. Reward given.");
             lastTeamBall = "purple";
         }
         else if (lastTeamBall == "purple")
         {
             m_PurpleAgentGroup.AddGroupReward(0.2f);
-            Debug.Log("Purple team successful pass. Partial reward given.");
+            //Debug.Log("Purple team successful pass. Partial reward given.");
         }
         else
         {
             lastTeamBall = "purple";
-            Debug.Log("Purple team first touch.");
+            //Debug.Log("Purple team first touch.");
         }
     }
 
@@ -170,18 +170,18 @@ public class SoccerEnvController : MonoBehaviour
         {
             m_BlueAgentGroup.AddGroupReward(0.5f);
             m_PurpleAgentGroup.AddGroupReward(-0.5f);
-            Debug.Log("Blue team stole the ball. Reward given.");
+            //Debug.Log("Blue team stole the ball. Reward given.");
             lastTeamBall = "blue";
         }
         else if (lastTeamBall == "blue")
         {
             m_BlueAgentGroup.AddGroupReward(0.2f);
-            Debug.Log("Blue team successful pass. Partial reward given.");
+            //Debug.Log("Blue team successful pass. Partial reward given.");
         }
         else
         {
             lastTeamBall = "blue";
-            Debug.Log("Blue team first touch.");
+            //Debug.Log("Blue team first touch.");
         }
     }
 
@@ -220,7 +220,7 @@ public class SoccerEnvController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("scoreText is null");
+            //Debug.LogWarning("scoreText is null");
         }
     }
 
@@ -232,7 +232,7 @@ public class SoccerEnvController : MonoBehaviour
         try
         {
             File.AppendAllText(filePath, content);
-            Debug.Log($"Scores written to {filePath}");
+            //Debug.Log($"Scores written to {filePath}");
         }
         catch (System.Exception ex)
         {

@@ -23,7 +23,7 @@ public class Creator : MonoBehaviour
     {
         if (soundCreater == null)
         {
-            Debug.LogError("No soundCreater prefab assigned!");
+            //Debug.LogError("No soundCreater prefab assigned!");
         }
     }
 
@@ -78,7 +78,7 @@ public class Creator : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("The instantiated sound object does not have a Collider component.");
+            //Debug.LogWarning("The instantiated sound object does not have a Collider component.");
         }
 
         // Modify transparency of the sound object
@@ -106,13 +106,12 @@ public class Creator : MonoBehaviour
     }
     else
     {
-        Debug.LogWarning("soundCreater prefab is not assigned.");
+        //Debug.LogWarning("soundCreater prefab is not assigned.");
     }
 }
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.LogWarning("Collision detected");
         GameObject firstObj = collision.gameObject;
         GameObject secObj = gameObject;
 

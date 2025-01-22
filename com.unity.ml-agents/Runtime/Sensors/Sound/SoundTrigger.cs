@@ -20,7 +20,7 @@ public class SoundTrigger : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Debug.LogWarning("Collision detected");
+        //Debug.LogWarning("Collision detected");
         // When collision occurs, create a new sound at the collision point
         if (soundManager != null)
         {

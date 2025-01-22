@@ -17,7 +17,7 @@ public class SoccerBallController : MonoBehaviour
 
         if (envController == null)
         {
-            Debug.LogError("SoccerEnvController not found on the area object.");
+            //Debug.LogError("SoccerEnvController not found on the area object.");
         }
 
     }
@@ -27,24 +27,24 @@ public class SoccerBallController : MonoBehaviour
         if (col.gameObject.CompareTag(purpleAgentTag))
         {
 
-            Debug.Log("Ball touched by Purple Agent");
+            //Debug.Log("Ball touched by Purple Agent");
 
             envController.purplePlayerTouched(Team.Purple);
         }
         else if (col.gameObject.CompareTag(blueAgentTag))
         {
-            Debug.Log("Ball touched by Blue Agent");
+            //Debug.Log("Ball touched by Blue Agent");
 
             envController.bluePlayerTouched(Team.Blue);
         }
         else if (col.gameObject.CompareTag(blueGoalTag))
         {
-            Debug.Log("Ball entered Blue Goal");
+            //Debug.Log("Ball entered Blue Goal");
             envController.GoalTouched(col.gameObject);
         }
         else if (col.gameObject.CompareTag(purpleGoalTag))
         {
-            Debug.Log("Ball entered Purple Goal");
+            //Debug.Log("Ball entered Purple Goal");
             envController.GoalTouched(col.gameObject);
         }
     }
